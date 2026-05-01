@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Audit &mdash; A Field Manual</title>
+<meta name="description" content="Honest look at the spend, the overlaps, and the gaps in the stack.">
+<link rel="canonical" href="https://flintomm.github.io/web-stack/audit.html">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#ecdfc8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Stack">
+<meta property="og:title" content="The Audit — The Stack">
+<meta property="og:description" content="Honest look at the spend, the overlaps, and the gaps in the stack.">
+<meta property="og:url" content="https://flintomm.github.io/web-stack/audit.html">
+<meta property="og:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Audit — The Stack">
+<meta name="twitter:description" content="Honest look at the spend, the overlaps, and the gaps in the stack.">
+<meta name="twitter:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="brand">Field Manual</a>
+  <a href="index.html">The Stack</a>
+  <a href="hardware.html">Cloud = Hardware</a>
+  <a href="flow.html">How It Links</a>
+  <a href="audit.html" class="current" aria-current="page">The Audit</a>
+  <a href="about.html">About</a>
+  <span class="nav-spacer"></span>
+  <span class="nav-meta">REV. 2026.05 &middot; FIELD MANUAL</span>
+</nav>
+
+<div class="frame">
+  <span class="corner-bl"></span>
+  <span class="corner-br"></span>
+
+  <header class="header">
+    <div class="title-block">
+      <div class="eyebrow">Field Manual / Vol. 04</div>
+      <h1>The <em>audit</em>.</h1>
+      <p class="subtitle">Where is the money going? Which tools overlap? What is missing? An honest look at the spend, the redundancies, and the gaps worth filling.</p>
+    </div>
+    <div class="meta">
+      <strong>REV. 2026.05</strong><br>
+      COST &amp; OVERLAP<br>
+      ~$11/YR &rarr; ~$50/MO<br>
+      <span style="color: var(--accent);">&bull;</span> CHECKED
+    </div>
+  </header>
+  <section class="audit">
+    <div class="audit-head">
+      <h2 class="audit-title">The <em>audit</em>.</h2>
+      <span class="audit-stamp">▣ INSPECTED</span>
+    </div>
+    <p class="audit-sub">A frank look at what this stack actually costs, where tools step on each other's toes, and what's still missing. <em>Pricing as of May 2026 — verify before you commit.</em></p>
+
+    <!-- TOTAL COST -->
+    <div class="audit-total">
+      <span class="audit-total-label">Today's bill →</span>
+      <span class="audit-total-val">~$11 / yr</span>
+      <span class="audit-total-label">Realistic ceiling →</span>
+      <span class="audit-total-val">~$45–60 / mo</span>
+      <p class="audit-total-note">Right now, you're spending <em>~$11/yr on the Porkbun domain</em> and riding free tiers everywhere else — Netlify, Cloudflare, Firebase Spark, Resend Free, GitHub Free, Umami self-hosted, Search Console. The ceiling kicks in once you outgrow free tiers: Netlify Pro ($20) + Railway Hobby ($5) + Resend Pro ($20) + a small DO droplet ($4) lands around <em>~$50/mo</em>. Firebase Blaze can spike unpredictably — set a Google Cloud budget alert.</p>
+    </div>
+
+    <!-- OVERLAPS -->
+    <div class="overlap-section">
+      <h3 class="audit-h3">Overlaps &amp; <em>redundancies</em></h3>
+      <p class="audit-h3-sub">— where two tools do the same job —</p>
+
+      <div class="overlap-list">
+
+        <div class="overlap-card">
+          <span class="overlap-tools">Cloudflare DNS<span class="vs">vs</span>Porkbun DNS</span>
+          <span class="overlap-severity low">LOW · BY DESIGN</span>
+          <p class="overlap-desc">Porkbun's "free DNS" is <strong>literally Cloudflare under the hood</strong>. If you set Cloudflare nameservers on your Porkbun domain, you bypass Porkbun's DNS panel and manage records directly in Cloudflare — unlocking caching, WAF, page rules, and Workers.</p>
+          <p class="overlap-verdict">Verdict — pick one and stick to it. Cloudflare for full features, Porkbun for "I just want it to resolve."</p>
+        </div>
+
+        <div class="overlap-card">
+          <span class="overlap-tools">Netlify Functions<span class="vs">vs</span>Railway / Fly</span>
+          <span class="overlap-severity med">MEDIUM</span>
+          <p class="overlap-desc">Both can run backend code. Netlify Functions are <strong>serverless (cold starts, 10s timeout)</strong>; Railway/Fly run <strong>always-on processes</strong>. People reach for Functions because their frontend is already on Netlify, then hit timeout walls.</p>
+          <p class="overlap-verdict">Verdict — Functions for tiny webhooks. Anything stateful, long-running, or with a real DB → Railway.</p>
+        </div>
+
+        <div class="overlap-card">
+          <span class="overlap-tools">Firebase Hosting<span class="vs">vs</span>Netlify</span>
+          <span class="overlap-severity low">LOW</span>
+          <p class="overlap-desc">Firebase ships its own static hosting. It's fine, but Netlify has better Git integration, deploy previews, and edge functions. <strong>Most people only use Firebase Hosting because they're already in the Firebase console</strong> — not because it's better.</p>
+          <p class="overlap-verdict">Verdict — keep Firebase for Auth + Realtime DB only. Let Netlify handle the static frontend.</p>
+        </div>
+
+        <div class="overlap-card">
+          <span class="overlap-tools">Railway<span class="vs">vs</span>Fly<span class="vs">vs</span>DigitalOcean</span>
+          <span class="overlap-severity high">HIGH · PICK ONE</span>
+          <p class="overlap-desc">All three host backend apps. Three accounts, three bills, three sets of mental overhead. <strong>You probably don't need all three</strong> — most projects only need one.</p>
+          <p class="overlap-verdict">Verdict — default to Railway. Use Fly only if multi-region latency genuinely matters. DO only when you want to learn Linux/admin or run something Railway can't.</p>
+        </div>
+
+        <div class="overlap-card">
+          <span class="overlap-tools">Umami<span class="vs">vs</span>Google Search Console</span>
+          <span class="overlap-severity low">NOT REDUNDANT</span>
+          <p class="overlap-desc">Easy to confuse — both deal with "who visits the site." But: <strong>Umami answers "who came and what did they do"</strong> (live traffic, referrers, pages). <strong>Search Console answers "what does Google think of my site"</strong> (crawl errors, indexed pages, search queries that led to clicks).</p>
+          <p class="overlap-verdict">Verdict — keep both. They're complementary, not duplicates.</p>
+        </div>
+
+        <div class="overlap-card">
+          <span class="overlap-tools">Cloudflare<span class="vs">could replace</span>most of this stack</span>
+          <span class="overlap-severity med">WORTH KNOWING</span>
+          <p class="overlap-desc">Cloudflare offers <a href="https://pages.cloudflare.com" target="_blank" rel="noopener"><strong>Pages</strong></a> (Netlify-like, unlimited bandwidth), <a href="https://workers.cloudflare.com" target="_blank" rel="noopener"><strong>Workers</strong></a> (Lambda-like), <a href="https://www.cloudflare.com/products/r2/" target="_blank" rel="noopener"><strong>R2</strong></a> (S3-like, no egress fees), <a href="https://developers.cloudflare.com/d1/" target="_blank" rel="noopener"><strong>D1</strong></a> (SQLite), <a href="https://developers.cloudflare.com/kv/" target="_blank" rel="noopener"><strong>KV</strong></a>, <a href="https://www.cloudflare.com/products/email-routing/" target="_blank" rel="noopener"><strong>Email Routing</strong></a>, and <a href="https://www.cloudflare.com/products/registrar/" target="_blank" rel="noopener"><strong>registrar</strong></a>. A Cloudflare-only stack is real and many devs run it.</p>
+          <p class="overlap-verdict">Verdict — not telling you to switch. But know it exists, and consider Pages next time Netlify credits get squeezed.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GAPS -->
+    <div class="overlap-section">
+      <h3 class="audit-h3">Gaps worth <em>filling</em></h3>
+      <p class="audit-h3-sub">— what's missing, and a recommendation —</p>
+
+      <div class="gaps-grid">
+
+        <div class="gap-card">
+          <span class="gap-tag">// gap 01</span>
+          <span class="gap-name">Error monitoring</span>
+          <p class="gap-desc">Right now, when production breaks, you find out from a user. Error monitoring catches uncaught exceptions, stack traces, and slow requests in real time.</p>
+          <span class="gap-pick"><strong>Pick:</strong> <a href="https://sentry.io" target="_blank" rel="noopener">Sentry</a> (free up to 5K errors/mo). Drop-in for Vite/React, takes 10 min.</span>
+        </div>
+
+        <div class="gap-card">
+          <span class="gap-tag">// gap 02</span>
+          <span class="gap-name">Object storage</span>
+          <p class="gap-desc">For user uploads, images, exports — anything Firebase Storage isn't already handling. Cheaper at volume than Firebase.</p>
+          <span class="gap-pick"><strong>Pick:</strong> <a href="https://www.cloudflare.com/products/r2/" target="_blank" rel="noopener">Cloudflare R2</a> ($0 egress, 10GB free). You already use Cloudflare.</span>
+        </div>
+
+        <div class="gap-card">
+          <span class="gap-tag">// gap 03</span>
+          <span class="gap-name">Uptime monitoring</span>
+          <p class="gap-desc">Is the site actually up right now? You don't have a pager. A simple ping every 60s tells you when something falls over.</p>
+          <span class="gap-pick"><strong>Pick:</strong> <a href="https://uptimerobot.com" target="_blank" rel="noopener">UptimeRobot</a> (free, 50 monitors) or <a href="https://betterstack.com" target="_blank" rel="noopener">BetterStack</a>.</span>
+        </div>
+
+        <div class="gap-card">
+          <span class="gap-tag">// gap 04</span>
+          <span class="gap-name">Secrets management</span>
+          <p class="gap-desc">Firebase keys in URLs, plaintext passwords — past audit findings. A vault or env-var manager fixes the blast radius.</p>
+          <span class="gap-pick"><strong>Pick:</strong> <a href="https://www.doppler.com" target="_blank" rel="noopener">Doppler</a> (free tier) or just lean on Netlify/Railway env vars + .env.local for dev.</span>
+        </div>
+
+        <div class="gap-card">
+          <span class="gap-tag">// gap 05</span>
+          <span class="gap-name">CI / testing</span>
+          <p class="gap-desc">Netlify builds prod, but nothing runs your tests on push. GitHub Actions covers this without leaving GitHub.</p>
+          <span class="gap-pick"><strong>Pick:</strong> <a href="https://github.com/features/actions" target="_blank" rel="noopener">GitHub Actions</a> (free 2,000 min/mo on private repos, unlimited on public).</span>
+        </div>
+
+        <div class="gap-card">
+          <span class="gap-tag">// gap 06</span>
+          <span class="gap-name">Backups</span>
+          <p class="gap-desc">If Firebase Realtime DB gets corrupted or someone fat-fingers a delete, what's the recovery plan? Right now: none.</p>
+          <span class="gap-pick"><strong>Pick:</strong> Scheduled <a href="https://firebase.google.com/docs/functions" target="_blank" rel="noopener">Cloud Function</a> exporting to Cloud Storage. Or move to <a href="https://firebase.google.com/docs/firestore" target="_blank" rel="noopener">Firestore</a> (built-in scheduled backups).</span>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <nav class="volume-nav" aria-label="Field manual navigation">
+    <a class="vn-prev" href="flow.html">
+      <span class="vn-dir">&lsaquo; Prev &middot; Vol. 03</span>
+      <span class="vn-title">How It Links Together</span>
+    </a>
+    <a class="vn-next" href="about.html">
+      <span class="vn-dir">Next &rsaquo; Colophon</span>
+      <span class="vn-title">About This Map</span>
+    </a>
+  </nav>
+
+  <footer class="footer">
+    <span>SHEET 04 OF 05 &middot; COST &amp; OVERLAP</span>
+    <span>REV. 2026.05 &middot; CHECKED</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

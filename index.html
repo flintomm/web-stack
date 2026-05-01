@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Stack &mdash; A Field Manual</title>
+<meta name="description" content="A field map of the modern web stack: build, source, hosting, backend, insight. 14 tools across 5 layers, every price verified.">
+<link rel="canonical" href="https://flintomm.github.io/web-stack/">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#ecdfc8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Stack">
+<meta property="og:title" content="The Stack — The Stack">
+<meta property="og:description" content="A field map of the modern web stack: build, source, hosting, backend, insight. 14 tools across 5 layers, every price verified.">
+<meta property="og:url" content="https://flintomm.github.io/web-stack/">
+<meta property="og:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Stack — The Stack">
+<meta name="twitter:description" content="A field map of the modern web stack. 14 tools across 5 layers, every price verified.">
+<meta name="twitter:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="brand">Field Manual</a>
+  <a href="index.html" class="current" aria-current="page">The Stack</a>
+  <a href="hardware.html">Cloud = Hardware</a>
+  <a href="flow.html">How It Links</a>
+  <a href="audit.html">The Audit</a>
+  <a href="about.html">About</a>
+  <span class="nav-spacer"></span>
+  <span class="nav-meta">REV. 2026.05 &middot; FIELD MANUAL</span>
+</nav>
+
+<div class="frame">
+  <span class="corner-bl"></span>
+  <span class="corner-br"></span>
+
+  <header class="header">
+    <div class="title-block">
+      <div class="eyebrow">Field Manual / Vol. 01</div>
+      <h1>The <em>Stack</em>,<br>laid bare.</h1>
+      <p class="subtitle">A working map of the tools used to ship modern web projects &mdash; from a blank repo to a live site with email, analytics, and a domain that actually resolves. Five pages: this one is the diagram. The others translate, trace, audit, and explain.</p>
+    </div>
+    <div class="meta">
+      <strong>REV. 2026.05</strong><br>
+      FIELD MANUAL / VOL. 01<br>
+      14 TOOLS &middot; 5 LAYERS &middot; 6 GAPS<br>
+      <span style="color: var(--accent);">&bull;</span> PRICING VERIFIED
+    </div>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><span class="swatch sw-build"></span>Build</div>
+    <div class="legend-item"><span class="swatch sw-ops"></span>Source &amp; Domains</div>
+    <div class="legend-item"><span class="swatch sw-host"></span>Hosting</div>
+    <div class="legend-item"><span class="swatch sw-data"></span>Backend &amp; Data</div>
+    <div class="legend-item"><span class="swatch sw-edge"></span>Delivery &amp; Insight</div>
+  </div>
+  <div class="diagram">
+
+    <!-- LAYER 01: BUILD -->
+    <div class="layer-label">
+      <span class="layer-num">01</span>
+      <span>Build — what runs on your machine</span>
+      <span class="layer-line"></span>
+    </div>
+
+    <div class="node span-6" data-cat="build">
+      <span class="node-num">01.A</span>
+      <span class="node-tag">Bundler / Dev Server</span>
+      <span class="node-name"><a href="https://vite.dev" target="_blank" rel="noopener">Vite</a></span>
+      <p class="node-desc">Fast HMR, dead-simple config. The default for SPAs and React work — anything that needs a fast feedback loop and modern JS tooling.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">a compiler — turns source into runnable files</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Cost</span><span class="node-price-val"><strong>$0</strong> · MIT open source</span>
+        <span class="node-price-label">Runs on</span><span class="node-price-val">your laptop · zero infra</span>
+      </div>
+    </div>
+
+    <div class="node span-6" data-cat="build">
+      <span class="node-num">01.B</span>
+      <span class="node-tag">Content Framework</span>
+      <span class="node-name"><a href="https://astro.build" target="_blank" rel="noopener">Astro</a></span>
+      <p class="node-desc">Ships HTML by default, JS only where you ask. Reach for content-first sites, blogs, marketing pages.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">a compiler tuned for static output</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Cost</span><span class="node-price-val"><strong>$0</strong> · MIT open source</span>
+        <span class="node-price-label">Runs on</span><span class="node-price-val">your laptop · zero infra</span>
+      </div>
+    </div>
+
+    <!-- LAYER 02: SOURCE & DOMAINS -->
+    <div class="layer-label">
+      <span class="layer-num">02</span>
+      <span>Source &amp; Domains — what makes it real</span>
+      <span class="layer-line"></span>
+    </div>
+
+    <div class="node span-4" data-cat="ops">
+      <span class="node-num">02.A</span>
+      <span class="node-tag">Version Control</span>
+      <span class="node-name"><a href="https://github.com" target="_blank" rel="noopener">GitHub</a></span>
+      <p class="node-desc">The single source of truth. Pushes here trigger every downstream deploy.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">a hard drive with full version history, shared</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Free</span><span class="node-price-val"><strong>$0</strong> · unlimited public + private repos</span>
+        <span class="node-price-label">Pro</span><span class="node-price-val">$4/mo · advanced tools, more Actions</span>
+      </div>
+    </div>
+
+    <div class="node span-4" data-cat="ops">
+      <span class="node-num">02.B</span>
+      <span class="node-tag">Domain Registrar</span>
+      <span class="node-name"><a href="https://porkbun.com" target="_blank" rel="noopener">Porkbun</a></span>
+      <p class="node-desc">Where the name is bought. Cheap, no upsell theater, clean dashboard.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">the DMV — issues your "license plate"</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">.com</span><span class="node-price-val"><strong>~$11/yr</strong> · same renewal price</span>
+        <span class="node-price-label">Includes</span><span class="node-price-val">WHOIS privacy, free DNS, SSL</span>
+      </div>
+    </div>
+
+    <div class="node span-4" data-cat="edge">
+      <span class="node-num">02.C</span>
+      <span class="node-tag">DNS / CDN / Edge</span>
+      <span class="node-name"><a href="https://www.cloudflare.com" target="_blank" rel="noopener">Cloudflare</a></span>
+      <p class="node-desc">Points the domain at the host. Caches, blocks bots, terminates TLS at the edge.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">phonebook + receptionist + bouncer</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Free</span><span class="node-price-val"><strong>$0</strong> · DNS, CDN, TLS, basic WAF</span>
+        <span class="node-price-label">Pro</span><span class="node-price-val">$25/mo · advanced firewall, image opt</span>
+      </div>
+    </div>
+
+    <!-- LAYER 03: HOSTING -->
+    <div class="layer-label">
+      <span class="layer-num">03</span>
+      <span>Hosting — where the code actually runs</span>
+      <span class="layer-line"></span>
+    </div>
+
+    <div class="node span-3" data-cat="host">
+      <span class="node-num">03.A</span>
+      <span class="node-tag">Static / JAMstack</span>
+      <span class="node-name"><a href="https://www.netlify.com" target="_blank" rel="noopener">Netlify</a></span>
+      <p class="node-desc">Git-push deploys, preview branches, edge functions. Default for Vite/Astro frontends.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">a rented hard drive — files only, no running CPU</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Free</span><span class="node-price-val"><strong>$0</strong> · 300 credits/mo (~20 deploys)</span>
+        <span class="node-price-label">Pro</span><span class="node-price-val">$20/mo · 3,000 credits, unlimited seats</span>
+        <span class="node-price-label">⚠ Watch</span><span class="node-price-val">credit-based — bandwidth bills add up</span>
+      </div>
+    </div>
+
+    <div class="node span-3" data-cat="host">
+      <span class="node-num">03.B</span>
+      <span class="node-tag">Backend / Long-running</span>
+      <span class="node-name"><a href="https://railway.com" target="_blank" rel="noopener">Railway</a></span>
+      <p class="node-desc">Docker apps, databases, background workers. Reach for it when Netlify isn't enough.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">rented CPU + RAM — OS &amp; runtime pre-wired</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Trial</span><span class="node-price-val">$5 credit · 30 days</span>
+        <span class="node-price-label">Hobby</span><span class="node-price-val"><strong>$5/mo</strong> · includes $5 usage</span>
+        <span class="node-price-label">Pro</span><span class="node-price-val">$20/mo · includes $20 usage, teams</span>
+      </div>
+    </div>
+
+    <div class="node span-3" data-cat="host">
+      <span class="node-num">03.C</span>
+      <span class="node-tag">Containers / Edge</span>
+      <span class="node-name"><a href="https://fly.io" target="_blank" rel="noopener">Fly.io</a></span>
+      <p class="node-desc">Full apps deployed close to users. Good for latency-sensitive backends.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">rented CPU + RAM — but you pick which city it sits in</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Free</span><span class="node-price-val">$0 · 7-day trial only (no perma free)</span>
+        <span class="node-price-label">Min app</span><span class="node-price-val"><strong>~$3-5/mo</strong> · pay-as-you-go after</span>
+        <span class="node-price-label">Note</span><span class="node-price-val">each region = separate machine $</span>
+      </div>
+    </div>
+
+    <div class="node span-3" data-cat="host">
+      <span class="node-num">03.D</span>
+      <span class="node-tag">VPS / Managed Cloud</span>
+      <span class="node-name"><a href="https://www.digitalocean.com" target="_blank" rel="noopener">DigitalOcean</a></span>
+      <p class="node-desc">Raw droplets when you want full control. The "I'll just SSH in" tier.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">rented motherboard — CPU, RAM, disk, all yours to wire</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Trial</span><span class="node-price-val">$200 credit · 60 days</span>
+        <span class="node-price-label">Basic</span><span class="node-price-val"><strong>$4/mo</strong> · 1 vCPU, 512MB, 10GB SSD</span>
+        <span class="node-price-label">Backups</span><span class="node-price-val">+20% of droplet cost</span>
+      </div>
+    </div>
+
+    <div class="node span-12" data-cat="host">
+      <span class="node-num">03.E</span>
+      <span class="node-tag">Free Static · The Silent Default</span>
+      <span class="node-name"><a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a></span>
+      <p class="node-desc">The host that ships with every repo. The default for one-shot HTML tools, docs sites, and personal pages — no separate signup, no separate dashboard, just a workflow file or a checkbox in Settings.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">the rented hard drive that comes free with the source-of-truth lease</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Free</span><span class="node-price-val"><strong>$0</strong> · public repos, custom domains, auto TLS</span>
+        <span class="node-price-label">Limits</span><span class="node-price-val">1 GB site · 100 GB/mo soft bandwidth · 10 builds/hr</span>
+        <span class="node-price-label">⚠ Watch</span><span class="node-price-val">static only — no server runtime, no env secrets at request time</span>
+      </div>
+    </div>
+
+    <!-- LAYER 04: DATA & SERVICES -->
+    <div class="layer-label">
+      <span class="layer-num">04</span>
+      <span>Backend &amp; Services — state, identity, mail</span>
+      <span class="layer-line"></span>
+    </div>
+
+    <div class="node span-6" data-cat="data">
+      <span class="node-num">04.A</span>
+      <span class="node-tag">BaaS · Auth · Realtime DB</span>
+      <span class="node-name"><a href="https://firebase.google.com" target="_blank" rel="noopener">Firebase</a></span>
+      <p class="node-desc">Realtime Database, Auth, simple hosting — when you need shared state across clients without writing a backend yourself.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">a shared filing cabinet + ID checker</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Spark</span><span class="node-price-val"><strong>$0</strong> · 50K reads/day, 20K writes/day, 1GB</span>
+        <span class="node-price-label">Blaze</span><span class="node-price-val">pay-as-you-go · same free quota included</span>
+        <span class="node-price-label">⚠ Watch</span><span class="node-price-val">no spend cap — viral traffic = real bills</span>
+      </div>
+    </div>
+
+    <div class="node span-6" data-cat="data">
+      <span class="node-num">04.B</span>
+      <span class="node-tag">Transactional Email</span>
+      <span class="node-name"><a href="https://resend.com" target="_blank" rel="noopener">Resend</a></span>
+      <p class="node-desc">Clean API, decent deliverability, React Email support. For password resets, receipts, alerts.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">an outbound mail clerk for your app</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Free</span><span class="node-price-val"><strong>$0</strong> · 3K emails/mo, 100/day, 1 domain</span>
+        <span class="node-price-label">Pro</span><span class="node-price-val">$20/mo · 50K emails, 10 domains</span>
+        <span class="node-price-label">Scale</span><span class="node-price-val">$90+/mo · dedicated IP, more volume</span>
+      </div>
+    </div>
+
+    <!-- LAYER 05: INSIGHT -->
+    <div class="layer-label">
+      <span class="layer-num">05</span>
+      <span>Insight — what the world is doing with it</span>
+      <span class="layer-line"></span>
+    </div>
+
+    <div class="node span-6" data-cat="edge">
+      <span class="node-num">05.A</span>
+      <span class="node-tag">Privacy-first Analytics</span>
+      <span class="node-name"><a href="https://umami.is" target="_blank" rel="noopener">Umami</a></span>
+      <p class="node-desc">Self-hostable, no cookies, no consent banner needed. Traffic, referrers, top pages.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">a doorbell counter with a logbook</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Self-host</span><span class="node-price-val"><strong>$0</strong> · open source, runs anywhere</span>
+        <span class="node-price-label">Cloud Free</span><span class="node-price-val">$0 · up to 10K events/mo, 6mo retention</span>
+        <span class="node-price-label">Cloud Pro</span><span class="node-price-val">$20/mo · unlimited retention</span>
+      </div>
+    </div>
+
+    <div class="node span-6" data-cat="edge">
+      <span class="node-num">05.B</span>
+      <span class="node-tag">SEO / Indexing</span>
+      <span class="node-name"><a href="https://search.google.com/search-console/about" target="_blank" rel="noopener">Google Search Console</a></span>
+      <p class="node-desc">What Google sees. Crawl errors, indexed pages, search-query performance.</p>
+      <div class="node-trans">
+        <span class="node-trans-label">≈</span>
+        <span class="node-trans-text">a librarian's report on your card catalog entry</span>
+      </div>
+      <div class="node-price">
+        <span class="node-price-label">Cost</span><span class="node-price-val"><strong>$0</strong> · forever, no upsell</span>
+        <span class="node-price-label">Setup</span><span class="node-price-val">verify domain via DNS TXT record</span>
+      </div>
+    </div>
+
+  </div>
+
+  <nav class="volume-nav" aria-label="Field manual navigation">
+    <span class="vn-placeholder"></span>
+    <a class="vn-next" href="hardware.html">
+      <span class="vn-dir">Next &rsaquo; Vol. 02</span>
+      <span class="vn-title">Cloud = Rented Hardware</span>
+    </a>
+  </nav>
+
+  <footer class="footer">
+    <span>SHEET 01 OF 05 &middot; THE STACK</span>
+    <span>REV. 2026.05 &middot; PRICING VERIFIED</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About &mdash; A Field Manual</title>
+<meta name="description" content="Why this stack map exists, who it's for, how the numbers were checked, and what's aspirational vs. shipped.">
+<link rel="canonical" href="https://flintomm.github.io/web-stack/about.html">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#ecdfc8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Stack">
+<meta property="og:title" content="About — The Stack">
+<meta property="og:description" content="Why this stack map exists, who it's for, how the numbers were checked, and what's aspirational vs. shipped.">
+<meta property="og:url" content="https://flintomm.github.io/web-stack/about.html">
+<meta property="og:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="About — The Stack">
+<meta name="twitter:description" content="Why this stack map exists, who it's for, and how the numbers were checked.">
+<meta name="twitter:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="brand">Field Manual</a>
+  <a href="index.html">The Stack</a>
+  <a href="hardware.html">Cloud = Hardware</a>
+  <a href="flow.html">How It Links</a>
+  <a href="audit.html">The Audit</a>
+  <a href="about.html" class="current" aria-current="page">About</a>
+  <span class="nav-spacer"></span>
+  <span class="nav-meta">REV. 2026.05 &middot; FIELD MANUAL</span>
+</nav>
+
+<div class="frame">
+  <span class="corner-bl"></span>
+  <span class="corner-br"></span>
+
+  <header class="header">
+    <div class="title-block">
+      <div class="eyebrow">Field Manual / Colophon</div>
+      <h1>About <em>this map</em>.</h1>
+      <p class="subtitle">Why this exists, who it&rsquo;s for, and the sources behind every number.</p>
+    </div>
+    <div class="meta">
+      <strong>REV. 2026.05</strong><br>
+      FIELD MANUAL / COLOPHON<br>
+      MIT-LICENSED<br>
+      <span style="color: var(--accent);">&bull;</span> OPEN SOURCE
+    </div>
+  </header>
+
+  <div class="diagram">
+
+    <div class="node span-6" data-cat="build">
+      <span class="node-tag">Why</span>
+      <span class="node-name">Why this exists</span>
+      <p class="node-desc">Most &ldquo;modern web stack&rdquo; diagrams are vendor logo soup &mdash; pretty pictures, no prices, no relationships. This is the version that should exist: every service named, every price verified, every relationship drawn. The web didn&rsquo;t need another logo grid, it needed a field manual.</p>
+    </div>
+
+    <div class="node span-6" data-cat="ops">
+      <span class="node-tag">Who</span>
+      <span class="node-name">Who it&rsquo;s for</span>
+      <p class="node-desc">Anyone shipping their second or third website who keeps colliding with the same questions: <em>do I need Netlify or Railway? Why is Cloudflare in front of everything? What does Firebase actually replace?</em> If you&rsquo;ve hand-rolled three landing pages and you&rsquo;re about to build something with users, this is for you.</p>
+    </div>
+
+    <div class="node span-6" data-cat="data">
+      <span class="node-tag">Sources</span>
+      <span class="node-name">How the prices were verified</span>
+      <p class="node-desc">Every dollar figure was checked on the vendor&rsquo;s public pricing page in May 2026. Free-tier limits, trial windows, and overage warnings all come from the same source. If a number looks stale, the date in the header is when it was last refreshed &mdash; the open issue tracker on GitHub is the place to flag drift.</p>
+    </div>
+
+    <div class="node span-6" data-cat="edge">
+      <span class="node-tag">License</span>
+      <span class="node-name">Use this however</span>
+      <p class="node-desc">Code is MIT. Words are CC0 / public domain &mdash; copy them into your own slide deck, onboarding doc, or napkin. Attribution is appreciated but not required. If you fork it and adapt it for your own stack, the more concrete maps in the world, the fewer logo soups.</p>
+    </div>
+
+    <div class="node span-12" data-cat="host">
+      <span class="node-tag">Honest disclosures</span>
+      <span class="node-name">What&rsquo;s on the diagram vs. in production</span>
+      <p class="node-desc">The diagram is opinionated &mdash; it shows the tools that earn their place in a real working stack, not necessarily the tools any one project happens to be running on launch day. Some nodes (Vite, Firebase) earn their spot from private projects; others (Astro, Cloudflare, Railway, Resend, GitHub Pages) you can find in public repos. Umami is recommended as the self-hosted analytics layer; spin it up when you actually need traffic data, not before.</p>
+    </div>
+
+  </div>
+
+  <nav class="volume-nav" aria-label="Field manual navigation">
+    <a class="vn-prev" href="audit.html">
+      <span class="vn-dir">&lsaquo; Prev &middot; Vol. 04</span>
+      <span class="vn-title">The Audit</span>
+    </a>
+    <a class="vn-next" href="index.html">
+      <span class="vn-dir">Back to start &rsaquo;</span>
+      <span class="vn-title">The Stack</span>
+    </a>
+  </nav>
+
+  <footer class="footer">
+    <span>SHEET 05 OF 05 &middot; COLOPHON</span>
+    <span>REV. 2026.05 &middot; OPEN SOURCE</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

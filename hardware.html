@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloud = Rented Hardware &mdash; A Field Manual</title>
+<meta name="description" content="The Rosetta layer: every cloud service translated back into rented hardware, plus a six-step lifecycle of one request.">
+<link rel="canonical" href="https://flintomm.github.io/web-stack/hardware.html">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#ecdfc8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Stack">
+<meta property="og:title" content="Cloud = Rented Hardware — The Stack">
+<meta property="og:description" content="The Rosetta layer: every cloud service translated back into rented hardware, plus a six-step lifecycle of one request.">
+<meta property="og:url" content="https://flintomm.github.io/web-stack/hardware.html">
+<meta property="og:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cloud = Rented Hardware — The Stack">
+<meta name="twitter:description" content="The Rosetta layer: every cloud service translated back into rented hardware.">
+<meta name="twitter:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="brand">Field Manual</a>
+  <a href="index.html">The Stack</a>
+  <a href="hardware.html" class="current" aria-current="page">Cloud = Hardware</a>
+  <a href="flow.html">How It Links</a>
+  <a href="audit.html">The Audit</a>
+  <a href="about.html">About</a>
+  <span class="nav-spacer"></span>
+  <span class="nav-meta">REV. 2026.05 &middot; FIELD MANUAL</span>
+</nav>
+
+<div class="frame">
+  <span class="corner-bl"></span>
+  <span class="corner-br"></span>
+
+  <header class="header">
+    <div class="title-block">
+      <div class="eyebrow">Field Manual / Vol. 02</div>
+      <h1>Cloud = <em>rented hardware</em>.</h1>
+      <p class="subtitle">The cloud is not magic. Every service in the stack is a slice of a physical machine somewhere, rented by the minute. This is the Rosetta layer &mdash; what each service maps to in plain hardware terms, plus a one-request walkthrough.</p>
+    </div>
+    <div class="meta">
+      <strong>REV. 2026.05</strong><br>
+      ROSETTA &amp; LIFECYCLE<br>
+      4 TIERS &middot; 6 STEPS<br>
+      <span style="color: var(--accent);">&bull;</span> TRANSLATED
+    </div>
+  </header>
+  <section class="rosetta">
+    <div class="rosetta-head">
+      <h2 class="rosetta-title">The cloud is just <em>rented hardware</em>.</h2>
+      <span class="rosetta-stamp">★ ROSETTA ★</span>
+    </div>
+
+    <aside class="rosetta-explainer">
+      <span class="rosetta-explainer-label">// what's a &ldquo;Rosetta layer&rdquo;?</span>
+      <p>Borrowed from the <a href="https://en.wikipedia.org/wiki/Rosetta_Stone" target="_blank" rel="noopener">Rosetta Stone</a> — a slab of basalt that translated the same text into three scripts side by side, and let scholars finally read Egyptian hieroglyphs. Same idea here: <strong>cloud-vendor terminology</strong> on one side, <strong>plain physical hardware</strong> on the other, line for line. Strip away the marketing and almost every &ldquo;cloud&rdquo; service is a familiar piece of computer hardware — a disk, a CPU, a network card — just rented by the minute and pre-configured for you.</p>
+    </aside>
+
+    <p class="rosetta-sub">Every cloud service maps to something you already know from the local machine. <strong>A server is a computer in someone else's building</strong> — same CPU, RAM, disk, and network card as your laptop. The real question isn't <em>&ldquo;is it a rented PC?&rdquo;</em> — they all are. The question is <strong>which parts you actually rent, and which parts they manage for you</strong>.</p>
+
+    <!-- HARDWARE RENTAL LADDER -->
+    <div class="ladder">
+      <div class="ladder-head">
+        <span>★ Hardware Rental Ladder</span>
+        <em>more control as you go down ↓</em>
+      </div>
+      <table class="ladder-table">
+        <thead>
+          <tr>
+            <th class="tier">Tier</th>
+            <th>Storage</th>
+            <th>CPU + RAM</th>
+            <th>OS / Runtime</th>
+            <th>Networking</th>
+            <th>Region</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Netlify<span class="tier-sub">static host</span></th>
+            <td><span class="part rented">disk</span></td>
+            <td><span class="part yours">— none —</span></td>
+            <td><span class="part yours">— none —</span></td>
+            <td><span class="part managed">CDN auto</span></td>
+            <td><span class="part managed">global edge</span></td>
+          </tr>
+          <tr>
+            <th>Railway<span class="tier-sub">PaaS</span></th>
+            <td><span class="part rented">disk</span></td>
+            <td><span class="part rented">CPU</span> <span class="part rented">RAM</span></td>
+            <td><span class="part managed">Linux + runtime</span></td>
+            <td><span class="part managed">SSL auto</span></td>
+            <td><span class="part managed">picked for you</span></td>
+          </tr>
+          <tr>
+            <th>Fly.io<span class="tier-sub">edge PaaS</span></th>
+            <td><span class="part rented">disk (volume)</span></td>
+            <td><span class="part rented">CPU</span> <span class="part rented">RAM</span></td>
+            <td><span class="part managed">Linux + runtime</span></td>
+            <td><span class="part managed">SSL auto</span></td>
+            <td><span class="part rented">you choose ✱</span></td>
+          </tr>
+          <tr>
+            <th>DigitalOcean<span class="tier-sub">VPS / droplet</span></th>
+            <td><span class="part rented">disk</span></td>
+            <td><span class="part rented">CPU</span> <span class="part rented">RAM</span></td>
+            <td><span class="part rented">bare OS — yours</span></td>
+            <td><span class="part rented">firewall — yours</span></td>
+            <td><span class="part rented">you choose</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="ladder-legend">
+        <div class="leg"><span class="part rented">rented</span> = you rent &amp; manage it</div>
+        <div class="leg"><span class="part managed">managed</span> = they manage it for you</div>
+        <div class="leg"><span class="part yours">— n/a —</span> = doesn't apply at this tier</div>
+      </div>
+      <div class="ladder-note">
+        Read it like this: <strong>the more red on a row, the more control you have — and the more responsibility</strong>. Netlify hands you a disk and walks away. DigitalOcean hands you the whole machine and says good luck. Railway and Fly are middle ground; the only meaningful difference between them is <strong>who picks the city your CPU lives in</strong>.
+      </div>
+    </div>
+
+    <div class="rosetta-grid">
+
+      <div class="rosetta-header-row">
+        <div class="rosetta-cell">In the cloud</div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell">On your machine</div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">Static Hosting</span>
+          <span class="rcell-name">Netlify</span>
+          <span class="rcell-note">Disk only — files served on request</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">A networked SSD</span>
+          <span class="rcell-name">just the <em>hard drive</em></span>
+          <span class="rcell-note">No CPU running your code. No RAM holding state. Just bytes.</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">App Platform / PaaS</span>
+          <span class="rcell-name">Railway</span>
+          <span class="rcell-note">CPU + RAM + disk, fully wired up</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">Renting a pre-built PC</span>
+          <span class="rcell-name">CPU &amp; RAM, <em>OS &amp; runtime preinstalled</em></span>
+          <span class="rcell-note">You bring code. They handle Linux, networking, SSL, restarts.</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">Edge Platform</span>
+          <span class="rcell-name">Fly.io</span>
+          <span class="rcell-note">Same as Railway, but you pick the location</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">Pre-built PC, your shelf</span>
+          <span class="rcell-name">CPU rented in <em>specific cities</em></span>
+          <span class="rcell-note">Multi-region = multiple machines = multiple bills.</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">VPS / Bare Cloud</span>
+          <span class="rcell-name">DigitalOcean</span>
+          <span class="rcell-note">Empty motherboard — you wire everything</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">Renting a barebones tower</span>
+          <span class="rcell-name">whole <em>motherboard</em> — CPU, RAM, disk, NIC</span>
+          <span class="rcell-note">You install the OS. You configure the firewall. You SSH in.</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">Domain Registrar</span>
+          <span class="rcell-name">Porkbun</span>
+          <span class="rcell-note">Records that the name belongs to you</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">License plate office</span>
+          <span class="rcell-name">the <em>DMV</em></span>
+          <span class="rcell-note">Issues the plate. Doesn't store your car.</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">DNS</span>
+          <span class="rcell-name">Cloudflare</span>
+          <span class="rcell-note">Maps example.com → 104.21.x.x</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">Phonebook lookup</span>
+          <span class="rcell-name">the <em>contacts app</em></span>
+          <span class="rcell-note">Name in, phone number out. Same idea.</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">CDN / Edge cache</span>
+          <span class="rcell-name">Cloudflare (other half)</span>
+          <span class="rcell-note">Cached copies of your site in 300+ cities</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">RAM cache</span>
+          <span class="rcell-name">your CPU's <em>L2 cache</em></span>
+          <span class="rcell-note">Keeps hot data close so you don't hit slow storage</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">Database</span>
+          <span class="rcell-name">Firebase Realtime DB</span>
+          <span class="rcell-note">Persistent state every client can read/write</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">Hard disk + a librarian</span>
+          <span class="rcell-name">a <em>shared SQLite file</em></span>
+          <span class="rcell-note">Storage on disk, with rules about who can touch what</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">Source control</span>
+          <span class="rcell-name">GitHub</span>
+          <span class="rcell-note">Versioned code, accessible to your team</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">Backup drive with history</span>
+          <span class="rcell-name"><em>Time Machine</em>, but for code</span>
+          <span class="rcell-note">Every save snapshotted, restorable, sharable</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">Build step</span>
+          <span class="rcell-name">Vite · Astro</span>
+          <span class="rcell-note">Source files → optimized bundles</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">Compiler</span>
+          <span class="rcell-name">like <em>gcc</em> for the web</span>
+          <span class="rcell-note">.jsx in, .html/.css/.js out. Runs on your CPU.</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">Transactional email</span>
+          <span class="rcell-name">Resend</span>
+          <span class="rcell-note">Your app sends mail through their API</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">Outbox + mailman</span>
+          <span class="rcell-name">your local <em>SMTP relay</em></span>
+          <span class="rcell-note">Hand off the letter; they handle delivery</span>
+        </div>
+      </div>
+
+      <div class="rosetta-row">
+        <div class="rosetta-cell cloud">
+          <span class="rcell-label">Analytics</span>
+          <span class="rcell-name">Umami · Search Console</span>
+          <span class="rcell-note">Logs of who visits and what they did</span>
+        </div>
+        <div class="rosetta-cell bridge">≈</div>
+        <div class="rosetta-cell local">
+          <span class="rcell-label">System log</span>
+          <span class="rcell-name"><em>/var/log</em> for visitors</span>
+          <span class="rcell-note">Append-only record. Read it later to find patterns.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- REQUEST LIFECYCLE STRIP -->
+    <div class="lifecycle">
+      <h3 class="lifecycle-title">One <em>request</em>, six steps.</h3>
+      <p class="lifecycle-sub">— what happens between typing example.com and seeing the page —</p>
+
+      <div class="lifecycle-strip">
+
+        <div class="step">
+          <span class="step-num">STEP 01</span>
+          <span class="step-title"><a href="https://developer.mozilla.org/en-US/docs/Glossary/DNS" target="_blank" rel="noopener">DNS Lookup</a></span>
+          <p class="step-desc">Browser asks: "what IP is example.com?" Cloudflare answers.</p>
+          <p class="step-analog">like opening Contacts to find a phone number before you call</p>
+          <span class="step-arrow">›</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">STEP 02</span>
+          <span class="step-title"><a href="https://developer.mozilla.org/en-US/docs/Glossary/TCP_handshake" target="_blank" rel="noopener">TCP Handshake</a></span>
+          <p class="step-desc">Two computers agree to talk. SYN → SYN-ACK → ACK.</p>
+          <p class="step-analog">"hello?" — "hi, I hear you" — "great, let's talk"</p>
+          <span class="step-arrow">›</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">STEP 03</span>
+          <span class="step-title"><a href="https://developer.mozilla.org/en-US/docs/Glossary/TLS" target="_blank" rel="noopener">TLS / HTTPS</a></span>
+          <p class="step-desc">Both sides exchange keys so the chat is encrypted.</p>
+          <p class="step-analog">switching to a private channel before saying anything secret</p>
+          <span class="step-arrow">›</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">STEP 04</span>
+          <span class="step-title"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET" target="_blank" rel="noopener">HTTP GET</a></span>
+          <p class="step-desc">"Send me /index.html, please." Server replies with the file.</p>
+          <p class="step-analog">asking the file server to copy a document to your desk</p>
+          <span class="step-arrow">›</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">STEP 05</span>
+          <span class="step-title"><a href="https://developer.mozilla.org/en-US/docs/Web/Performance/How_browsers_work" target="_blank" rel="noopener">Render &amp; Fetch</a></span>
+          <p class="step-desc">Browser parses HTML, requests JS / CSS / images.</p>
+          <p class="step-analog">CPU loads the program; it asks for more files as it runs</p>
+          <span class="step-arrow">›</span>
+        </div>
+
+        <div class="step">
+          <span class="step-num">STEP 06</span>
+          <span class="step-title">App Talks Back</span>
+          <p class="step-desc">JS calls Firebase, fires Umami ping, maybe triggers Resend.</p>
+          <p class="step-analog">the running program reads/writes files on disk &amp; logs activity</p>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <nav class="volume-nav" aria-label="Field manual navigation">
+    <a class="vn-prev" href="index.html">
+      <span class="vn-dir">&lsaquo; Prev &middot; Vol. 01</span>
+      <span class="vn-title">The Stack</span>
+    </a>
+    <a class="vn-next" href="flow.html">
+      <span class="vn-dir">Next &rsaquo; Vol. 03</span>
+      <span class="vn-title">How It Links Together</span>
+    </a>
+  </nav>
+
+  <footer class="footer">
+    <span>SHEET 02 OF 05 &middot; ROSETTA &amp; LIFECYCLE</span>
+    <span>REV. 2026.05 &middot; TRANSLATED</span>
+  </footer>
+
+</div>
+
+</body>
+</html>
