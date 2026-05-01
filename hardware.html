@@ -33,6 +33,7 @@
   <a href="hardware.html" class="current" aria-current="page">Cloud = Hardware</a>
   <a href="flow.html">How It Links</a>
   <a href="audit.html">The Audit</a>
+  <a href="glossary.html">Glossary</a>
   <a href="about.html">About</a>
   <span class="nav-spacer"></span>
   <span class="nav-meta">REV. 2026.05 &middot; FIELD MANUAL</span>
@@ -55,7 +56,7 @@
       <span style="color: var(--accent);">&bull;</span> TRANSLATED
     </div>
   </header>
-  <section class="rosetta">
+  <section class="rosetta" id="rosetta">
     <div class="rosetta-head">
       <h2 class="rosetta-title">The cloud is just <em>rented hardware</em>.</h2>
       <span class="rosetta-stamp">★ ROSETTA ★</span>
@@ -69,7 +70,7 @@
     <p class="rosetta-sub">Every cloud service maps to something you already know from the local machine. <strong>A server is a computer in someone else's building</strong> — same CPU, RAM, disk, and network card as your laptop. The real question isn't <em>&ldquo;is it a rented PC?&rdquo;</em> — they all are. The question is <strong>which parts you actually rent, and which parts they manage for you</strong>.</p>
 
     <!-- HARDWARE RENTAL LADDER -->
-    <div class="ladder">
+    <div class="ladder" id="hardware-ladder">
       <div class="ladder-head">
         <span>★ Hardware Rental Ladder</span>
         <em>more control as you go down ↓</em>
@@ -315,7 +316,7 @@
 
       <div class="lifecycle-strip">
 
-        <div class="step">
+        <div class="step" id="step-01">
           <span class="step-num">STEP 01</span>
           <span class="step-title"><a href="https://developer.mozilla.org/en-US/docs/Glossary/DNS" target="_blank" rel="noopener">DNS Lookup</a></span>
           <p class="step-desc">Browser asks: "what IP is example.com?" Cloudflare answers.</p>
@@ -323,7 +324,7 @@
           <span class="step-arrow">›</span>
         </div>
 
-        <div class="step">
+        <div class="step" id="step-02">
           <span class="step-num">STEP 02</span>
           <span class="step-title"><a href="https://developer.mozilla.org/en-US/docs/Glossary/TCP_handshake" target="_blank" rel="noopener">TCP Handshake</a></span>
           <p class="step-desc">Two computers agree to talk. SYN → SYN-ACK → ACK.</p>
@@ -331,7 +332,7 @@
           <span class="step-arrow">›</span>
         </div>
 
-        <div class="step">
+        <div class="step" id="step-03">
           <span class="step-num">STEP 03</span>
           <span class="step-title"><a href="https://developer.mozilla.org/en-US/docs/Glossary/TLS" target="_blank" rel="noopener">TLS / HTTPS</a></span>
           <p class="step-desc">Both sides exchange keys so the chat is encrypted.</p>
@@ -339,7 +340,7 @@
           <span class="step-arrow">›</span>
         </div>
 
-        <div class="step">
+        <div class="step" id="step-04">
           <span class="step-num">STEP 04</span>
           <span class="step-title"><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET" target="_blank" rel="noopener">HTTP GET</a></span>
           <p class="step-desc">"Send me /index.html, please." Server replies with the file.</p>
@@ -379,7 +380,7 @@
   </nav>
 
   <footer class="footer">
-    <span>SHEET 02 OF 05 &middot; ROSETTA &amp; LIFECYCLE</span>
+    <span>SHEET 02 OF 06 &middot; ROSETTA &amp; LIFECYCLE</span>
     <span>REV. 2026.05 &middot; TRANSLATED</span>
   </footer>
 

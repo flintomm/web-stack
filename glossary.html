@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glossary &mdash; A Field Manual</title>
+<meta name="description" content="Plain-language definitions for every CS / web-stack term used elsewhere in this manual. ~50 entries, each linked back to where it first appears.">
+<link rel="canonical" href="https://flintomm.github.io/web-stack/glossary.html">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#ecdfc8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Stack">
+<meta property="og:title" content="Glossary — The Stack">
+<meta property="og:description" content="Plain-language definitions for every CS / web-stack term used elsewhere in this manual. ~50 entries, each linked back to where it first appears.">
+<meta property="og:url" content="https://flintomm.github.io/web-stack/glossary.html">
+<meta property="og:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Glossary — The Stack">
+<meta name="twitter:description" content="Plain-language definitions for every CS / web-stack term used elsewhere in this manual.">
+<meta name="twitter:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="index.html" class="brand">Field Manual</a>
+  <a href="index.html">The Stack</a>
+  <a href="hardware.html">Cloud = Hardware</a>
+  <a href="flow.html">How It Links</a>
+  <a href="audit.html">The Audit</a>
+  <a href="glossary.html" class="current" aria-current="page">Glossary</a>
+  <a href="about.html">About</a>
+  <span class="nav-spacer"></span>
+  <span class="nav-meta">REV. 2026.05 &middot; FIELD MANUAL</span>
+</nav>
+
+<div class="frame">
+  <span class="corner-bl"></span>
+  <span class="corner-br"></span>
+
+  <header class="header">
+    <div class="title-block">
+      <div class="eyebrow">Field Manual / Vol. 05</div>
+      <h1>The <em>glossary</em>.</h1>
+      <p class="subtitle">Plain-language definitions for the jargon scattered through the other four volumes &mdash; bundlers, BaaS, JAMstack, Procfile, the works. Read top to bottom or jump to a category. Each entry links back to where it first appears in the manual.</p>
+    </div>
+    <div class="meta">
+      <strong>REV. 2026.05</strong><br>
+      FIELD MANUAL / VOL. 05<br>
+      ~50 ENTRIES &middot; 8 CATEGORIES<br>
+      <span style="color: var(--accent);">&bull;</span> PLAIN ENGLISH
+    </div>
+  </header>
+
+  <section class="glossary">
+
+    <div class="gloss-toc">
+      <span class="gloss-toc-label">Quick jump:</span>
+      <a href="#cat-build">Build &amp; frameworks</a>
+      <a href="#cat-source">Source, version control, domains</a>
+      <a href="#cat-hosting">Hosting &amp; infrastructure</a>
+      <a href="#cat-backend">Backend &amp; data</a>
+      <a href="#cat-network">Networking &amp; the request lifecycle</a>
+      <a href="#cat-hardware">Hardware</a>
+      <a href="#cat-cost">Cost &amp; billing</a>
+      <a href="#cat-insight">Insight &amp; SEO</a>
+    </div>
+
+    <!-- ============== BUILD & FRAMEWORKS ============== -->
+    <div class="gloss-cat" id="cat-build">
+      <h2 class="gloss-cat-title">
+        <span class="gloss-cat-num">01</span>
+        Build &amp; <em>frameworks</em>
+        <span class="gloss-cat-line"></span>
+      </h2>
+      <p class="gloss-cat-sub">&mdash; what you run on your laptop to turn source files into shippable bundles &mdash;</p>
+
+      <div class="gloss-grid">
+
+        <article class="gloss-entry" id="term-bundler">
+          <h3 class="gloss-term">Bundler</h3>
+          <p class="gloss-def">A tool that reads your scattered source files (JS, CSS, images, components) and outputs the smaller, optimized files a browser actually downloads. Without one, the browser would have to fetch every file individually &mdash; slow.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-01a">Vol. 01 / Vite card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-dev-server">
+          <h3 class="gloss-term">Dev server</h3>
+          <p class="gloss-def">A tiny web server that runs on your laptop while you&rsquo;re writing code. Serves your site at <code>localhost:5173</code> (or similar) and reloads when you save a file. Not what users hit in production.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-01a">Vol. 01 / Vite card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-hmr">
+          <h3 class="gloss-term">HMR <span class="gloss-expand">(Hot Module Replacement)</span></h3>
+          <p class="gloss-def">When you save a file, the dev server swaps just the changed code into the running page &mdash; no full reload, no losing what you typed in a form. The reason modern dev feels instant.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-01a">Vol. 01 / Vite card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-spa">
+          <h3 class="gloss-term">SPA <span class="gloss-expand">(Single-Page App)</span></h3>
+          <p class="gloss-def">One HTML file. JavaScript swaps the visible content as you click around &mdash; no full page reloads. Snappy, but the page is blank until JS runs, which hurts SEO and slow connections.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-01a">Vol. 01 / Vite card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-compiler">
+          <h3 class="gloss-term">Compiler</h3>
+          <p class="gloss-def">Turns source code in one language into a different form that can actually run. <em>gcc</em> compiles C into machine code; Vite/Astro compile <code>.jsx</code> + <code>.css</code> into the <code>.html</code>/<code>.js</code> a browser eats.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#rosetta">Vol. 02 / Rosetta translation</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-jamstack">
+          <h3 class="gloss-term">JAMstack</h3>
+          <p class="gloss-def"><strong>J</strong>avaScript + <strong>A</strong>PIs + <strong>M</strong>arkup. The pattern: pre-built static HTML/CSS/JS served from a CDN, calling APIs only when the page needs live data. No server rendering pages on demand. Cheap, fast, mostly cacheable.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-03a">Vol. 01 / Netlify card</a></span>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ============== SOURCE / VERSION CONTROL / DOMAINS ============== -->
+    <div class="gloss-cat" id="cat-source">
+      <h2 class="gloss-cat-title">
+        <span class="gloss-cat-num">02</span>
+        Source, <em>version control</em>, domains
+      <span class="gloss-cat-line"></span>
+      </h2>
+      <p class="gloss-cat-sub">&mdash; the names, ledgers, and pointers that make a site real &mdash;</p>
+
+      <div class="gloss-grid">
+
+        <article class="gloss-entry" id="term-repo">
+          <h3 class="gloss-term">Repo <span class="gloss-expand">(Repository)</span></h3>
+          <p class="gloss-def">The folder Git tracks. One per project. Contains your code <em>plus</em> every change ever made to it (branches, history, who-did-what). &ldquo;Push to the repo&rdquo; means upload your changes.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-02a">Vol. 01 / GitHub card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-version-control">
+          <h3 class="gloss-term">Version control</h3>
+          <p class="gloss-def">A system that records every save as a snapshot &mdash; restorable, shareable, branchable. Git is the dominant one; GitHub is where you put a Git repo so others can see it.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-02a">Vol. 01 / GitHub card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-webhook">
+          <h3 class="gloss-term">Webhook</h3>
+          <p class="gloss-def">A URL one service calls when something happens. Push to GitHub &rarr; GitHub fires Netlify&rsquo;s webhook &rarr; Netlify rebuilds. Replaces &ldquo;poll every 5 minutes to see if anything changed.&rdquo;</p>
+          <span class="gloss-source">Appears in: <a href="flow.html">Vol. 03 / Wiring diagram</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-registrar">
+          <h3 class="gloss-term">Domain registrar</h3>
+          <p class="gloss-def">A company licensed by ICANN to sell you a domain name. Porkbun, Namecheap, Cloudflare. You pay yearly &mdash; if you stop, the name goes back on the open market.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-02b">Vol. 01 / Porkbun card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-whois">
+          <h3 class="gloss-term">WHOIS / WHOIS privacy</h3>
+          <p class="gloss-def">WHOIS is the public registry of who owns each domain (name, address, email). WHOIS privacy hides your real info behind a proxy &mdash; mandatory in 2026 if you don&rsquo;t want spam.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-02b">Vol. 01 / Porkbun card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-dns">
+          <h3 class="gloss-term">DNS <span class="gloss-expand">(Domain Name System)</span></h3>
+          <p class="gloss-def">The internet&rsquo;s phonebook. Translates <code>example.com</code> into <code>93.184.216.34</code> (the actual IP your computer connects to). Every page load starts with a DNS lookup.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#step-01">Vol. 02 / DNS Lookup step</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-nameserver">
+          <h3 class="gloss-term">Nameserver</h3>
+          <p class="gloss-def">The DNS server that&rsquo;s authoritative for a domain &mdash; the source of truth for &ldquo;where does <code>example.com</code> live?&rdquo; You set yours at the registrar; usually you point them at Cloudflare.</p>
+          <span class="gloss-source">Appears in: <a href="audit.html">Vol. 04 / Cloudflare DNS overlap</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-records">
+          <h3 class="gloss-term">A record / CNAME</h3>
+          <p class="gloss-def">DNS entry types. An <strong>A record</strong> points a name directly at an IPv4 address (<code>104.21.x.x</code>). A <strong>CNAME</strong> points a name at <em>another name</em> (which then resolves to an IP).</p>
+          <span class="gloss-source">Appears in: <a href="flow.html">Vol. 03 / Wiring diagram</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-txt">
+          <h3 class="gloss-term">TXT record</h3>
+          <p class="gloss-def">A DNS field that holds arbitrary text. Used for site-ownership verification (Google, Apple), email auth (SPF, DKIM, DMARC), and other &ldquo;prove you control this domain&rdquo; checks.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-05b">Vol. 01 / Search Console card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-tls">
+          <h3 class="gloss-term">TLS / HTTPS / SSL</h3>
+          <p class="gloss-def">Encryption between browser and server &mdash; the padlock in the URL bar. <strong>SSL</strong> is the old name, <strong>TLS</strong> is the current name, <strong>HTTPS</strong> is HTTP wrapped in TLS. Free now thanks to Let&rsquo;s Encrypt; auto-issued by every modern host.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-02c">Vol. 01 / Cloudflare card</a></span>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ============== HOSTING & INFRASTRUCTURE ============== -->
+    <div class="gloss-cat" id="cat-hosting">
+      <h2 class="gloss-cat-title">
+        <span class="gloss-cat-num">03</span>
+        Hosting &amp; <em>infrastructure</em>
+        <span class="gloss-cat-line"></span>
+      </h2>
+      <p class="gloss-cat-sub">&mdash; where your code actually runs, and what each tier hands you &mdash;</p>
+
+      <div class="gloss-grid">
+
+        <article class="gloss-entry" id="term-static-hosting">
+          <h3 class="gloss-term">Static hosting</h3>
+          <p class="gloss-def">A server that hands out files only &mdash; no code runs on the server when a request comes in. Cheap, fast, can&rsquo;t do anything dynamic without JS in the browser. Netlify, GitHub Pages, Cloudflare Pages.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-03a">Vol. 01 / Netlify card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-cdn">
+          <h3 class="gloss-term">CDN <span class="gloss-expand">(Content Delivery Network)</span></h3>
+          <p class="gloss-def">A network of servers in many cities that cache copies of your static files. A user in Tokyo gets the file from a Tokyo server, not California &mdash; faster and cheaper. Cloudflare runs ~300 of these.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-02c">Vol. 01 / Cloudflare card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-waf">
+          <h3 class="gloss-term">WAF <span class="gloss-expand">(Web Application Firewall)</span></h3>
+          <p class="gloss-def">A filter sitting in front of your site that blocks malicious requests (SQL injection attempts, scrapers, known-bad bots) before they reach your server. Cloudflare ships a basic one for free.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-02c">Vol. 01 / Cloudflare card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-paas">
+          <h3 class="gloss-term">PaaS <span class="gloss-expand">(Platform as a Service)</span></h3>
+          <p class="gloss-def">They give you the OS, runtime, networking, SSL. You give them your code (or a Dockerfile). Middle ground between dumb static hosts and bare VPSes. Railway, Fly.io, Heroku, Render.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#hardware-ladder">Vol. 02 / Rental Ladder, &ldquo;Railway&rdquo; row</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-vps">
+          <h3 class="gloss-term">VPS / droplet</h3>
+          <p class="gloss-def"><strong>VPS</strong> = Virtual Private Server, a slice of a physical server you control completely. <strong>Droplet</strong> is what DigitalOcean calls theirs (other vendors say &ldquo;instance,&rdquo; &ldquo;node,&rdquo; or just &ldquo;VM&rdquo;). You pick the OS, install the software, manage security.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-03d">Vol. 01 / DigitalOcean card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-container">
+          <h3 class="gloss-term">Container / Docker</h3>
+          <p class="gloss-def">Your app + everything it needs (libraries, system tools, config) packaged into one isolated, runnable unit defined by a <code>Dockerfile</code>. Same container runs the same way on any host &mdash; your laptop, Railway, AWS &mdash; which is why everything supports it.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-03b">Vol. 01 / Railway card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-procfile">
+          <h3 class="gloss-term">Procfile</h3>
+          <p class="gloss-def">A one-line file (literally named <code>Procfile</code>, no extension) that tells a PaaS what command to run. E.g., <code>web: node server.js</code>. Heroku invented it; most PaaSes accept it as a fallback when there&rsquo;s no Dockerfile.</p>
+          <span class="gloss-source gloss-source-none">Mentioned in chat &mdash; not currently in the manual</span>
+        </article>
+
+        <article class="gloss-entry" id="term-edge-functions">
+          <h3 class="gloss-term">Edge functions</h3>
+          <p class="gloss-def">Code that runs <em>inside the CDN</em>, in the same data center as the cached files &mdash; close to the user. Faster than a single origin server but limited in size, runtime (often V8/JS only), and disk access.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-03a">Vol. 01 / Netlify card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-serverless">
+          <h3 class="gloss-term">Serverless / cold start</h3>
+          <p class="gloss-def"><strong>Serverless</strong>: a function that runs only when called, then sleeps. You pay per invocation, not per uptime. <strong>Cold start</strong>: the first call after a sleep is slow (hundreds of ms to seconds) because the runtime has to spin up. Subsequent calls are fast until it sleeps again.</p>
+          <span class="gloss-source">Appears in: <a href="audit.html">Vol. 04 / Netlify Functions overlap</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-credits">
+          <h3 class="gloss-term">Build credits / build minutes</h3>
+          <p class="gloss-def">How PaaS and static hosts meter compute. Each git push triggers a build that consumes minutes (or &ldquo;credits&rdquo;). Run out, builds queue or fail until next month or you upgrade. Bandwidth and function invocations are usually metered the same way.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-03a">Vol. 01 / Netlify card</a></span>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ============== BACKEND & DATA ============== -->
+    <div class="gloss-cat" id="cat-backend">
+      <h2 class="gloss-cat-title">
+        <span class="gloss-cat-num">04</span>
+        Backend &amp; <em>data</em>
+        <span class="gloss-cat-line"></span>
+      </h2>
+      <p class="gloss-cat-sub">&mdash; the parts that hold state, identify users, and send mail &mdash;</p>
+
+      <div class="gloss-grid">
+
+        <article class="gloss-entry" id="term-api">
+          <h3 class="gloss-term">API <span class="gloss-expand">(Application Programming Interface)</span></h3>
+          <p class="gloss-def">A service&rsquo;s public &ldquo;control panel&rdquo; &mdash; a defined set of URLs and message formats that other code can call. Most modern APIs are HTTP/JSON. When you say &ldquo;the Stripe API,&rdquo; you mean the URLs Stripe lets you POST to.</p>
+          <span class="gloss-source">Appears in: <a href="flow.html">Vol. 03 / Wiring diagram</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-sdk">
+          <h3 class="gloss-term">SDK <span class="gloss-expand">(Software Development Kit)</span></h3>
+          <p class="gloss-def">An official client library that wraps an API in your language. You call <code>firebase.signIn(email, pass)</code> instead of <code>fetch()</code> with the right headers and body. Saves you from re-reading the docs.</p>
+          <span class="gloss-source">Appears in: <a href="flow.html">Vol. 03 / &ldquo;SDK &middot; realtime sync&rdquo;</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-baas">
+          <h3 class="gloss-term">BaaS <span class="gloss-expand">(Backend as a Service)</span></h3>
+          <p class="gloss-def">Auth + database + storage + push notifications, bundled as one product. You don&rsquo;t run a server, you call SDKs from the frontend. Firebase and Supabase are the standards. Trades flexibility for &ldquo;don&rsquo;t spend two weeks wiring this up.&rdquo;</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-04a">Vol. 01 / Firebase card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-realtime-db">
+          <h3 class="gloss-term">Realtime database</h3>
+          <p class="gloss-def">A database that pushes updates to subscribed clients automatically. When one user adds a row, every connected app sees it within milliseconds &mdash; no polling. Powers chat, collaborative docs, multiplayer state, live dashboards.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-04a">Vol. 01 / Firebase card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-auth">
+          <h3 class="gloss-term">Auth <span class="gloss-expand">(Authentication)</span></h3>
+          <p class="gloss-def">Proving who a user is. Email + password, OAuth (&ldquo;sign in with Google&rdquo;), magic links, passkeys. Distinct from <em>authorization</em>, which is what they&rsquo;re allowed to do once you know who they are.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-04a">Vol. 01 / Firebase card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-transactional">
+          <h3 class="gloss-term">Transactional email</h3>
+          <p class="gloss-def">Single emails triggered by an event in your app: password reset, signup confirmation, receipt, alert. Distinct from <em>marketing email</em> (newsletters to a list). Different deliverability rules, different vendors usually.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-04b">Vol. 01 / Resend card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-smtp">
+          <h3 class="gloss-term">SMTP <span class="gloss-expand">(Simple Mail Transfer Protocol)</span></h3>
+          <p class="gloss-def">The 1982 protocol email travels over. Resend, Mailgun, Postmark all spit out SMTP under the hood &mdash; you just call their nicer HTTP API instead of speaking SMTP yourself.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#rosetta">Vol. 02 / Rosetta translation</a></span>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ============== NETWORKING / REQUEST LIFECYCLE ============== -->
+    <div class="gloss-cat" id="cat-network">
+      <h2 class="gloss-cat-title">
+        <span class="gloss-cat-num">05</span>
+        Networking &amp; the <em>request lifecycle</em>
+        <span class="gloss-cat-line"></span>
+      </h2>
+      <p class="gloss-cat-sub">&mdash; the steps every page load takes between your laptop and the server &mdash;</p>
+
+      <div class="gloss-grid">
+
+        <article class="gloss-entry" id="term-ip">
+          <h3 class="gloss-term">IP address</h3>
+          <p class="gloss-def">The numeric &ldquo;phone number&rdquo; of a machine on the internet. IPv4 looks like <code>104.21.42.18</code>, IPv6 looks like <code>2606:4700:...</code>. DNS is what lets you type a name instead of digits.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#step-01">Vol. 02 / DNS Lookup step</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-tcp-handshake">
+          <h3 class="gloss-term">TCP handshake</h3>
+          <p class="gloss-def">A three-step &ldquo;are we both here, can we talk&rdquo; exchange before any actual data flows. SYN (&ldquo;hello?&rdquo;) &rarr; SYN-ACK (&ldquo;hi, I hear you&rdquo;) &rarr; ACK (&ldquo;great, let&rsquo;s talk&rdquo;). Happens once per TCP connection.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#step-02">Vol. 02 / TCP Handshake step</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-tls-handshake">
+          <h3 class="gloss-term">TLS handshake</h3>
+          <p class="gloss-def">After TCP is up, both sides exchange cryptographic keys so the rest of the conversation is private. Happens once per HTTPS connection. The server&rsquo;s certificate is checked here &mdash; that&rsquo;s where the &ldquo;your connection is not private&rdquo; warning comes from.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#step-03">Vol. 02 / TLS / HTTPS step</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-http-get">
+          <h3 class="gloss-term">HTTP GET</h3>
+          <p class="gloss-def">The &ldquo;send me this resource&rdquo; request method. Most page loads and image fetches are GETs. Other common methods: <strong>POST</strong> (send data, e.g. a form), <strong>PUT</strong> (replace), <strong>DELETE</strong> (remove).</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#step-04">Vol. 02 / HTTP GET step</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-cache">
+          <h3 class="gloss-term">Cache</h3>
+          <p class="gloss-def">A copy of something kept somewhere faster to read than the original. Browsers cache images. CDNs cache HTML. CPUs cache RAM. The pattern: store the slow-to-fetch thing close by, refresh occasionally.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#rosetta">Vol. 02 / Rosetta translation, &ldquo;CDN&rdquo; row</a></span>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ============== HARDWARE ============== -->
+    <div class="gloss-cat" id="cat-hardware">
+      <h2 class="gloss-cat-title">
+        <span class="gloss-cat-num">06</span>
+        <em>Hardware</em>
+        <span class="gloss-cat-line"></span>
+      </h2>
+      <p class="gloss-cat-sub">&mdash; the physical parts every &ldquo;cloud&rdquo; service is renting you a slice of &mdash;</p>
+
+      <div class="gloss-grid">
+
+        <article class="gloss-entry" id="term-cpu-ram-disk">
+          <h3 class="gloss-term">CPU / RAM / disk</h3>
+          <p class="gloss-def">The three storage tiers of any computer. <strong>CPU</strong>: the chips that compute. <strong>RAM</strong>: working memory &mdash; fast, but loses everything on power-off. <strong>Disk</strong> (HDD / SSD): long-term storage &mdash; slower than RAM, keeps its contents forever.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#hardware-ladder">Vol. 02 / Hardware Rental Ladder</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-l2-cache">
+          <h3 class="gloss-term">L2 cache</h3>
+          <p class="gloss-def">Tiny, ultra-fast memory built into the CPU itself. The CPU pulls hot data here so it doesn&rsquo;t have to wait on slower RAM. A CDN&rsquo;s edge cache is the same idea, scaled up to whole websites.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#rosetta">Vol. 02 / Rosetta translation, CDN row</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-nic">
+          <h3 class="gloss-term">NIC <span class="gloss-expand">(Network Interface Card)</span></h3>
+          <p class="gloss-def">The chip in your computer that talks to the network &mdash; ethernet port or wifi radio. Both your laptop and a cloud server have one; both work the same way. The cloud just rents you access to theirs.</p>
+          <span class="gloss-source">Appears in: <a href="hardware.html#rosetta">Vol. 02 / Rosetta intro</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-ssh">
+          <h3 class="gloss-term">SSH <span class="gloss-expand">(Secure Shell)</span></h3>
+          <p class="gloss-def">Encrypted command-line access to a remote machine. The &ldquo;I&rsquo;m just gonna log in and fix it manually&rdquo; tool. <code>ssh user@server.com</code> drops you into a terminal as if you were sitting at that machine.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-03d">Vol. 01 / DigitalOcean card</a></span>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ============== COST & BILLING ============== -->
+    <div class="gloss-cat" id="cat-cost">
+      <h2 class="gloss-cat-title">
+        <span class="gloss-cat-num">07</span>
+        Cost &amp; <em>billing</em>
+        <span class="gloss-cat-line"></span>
+      </h2>
+      <p class="gloss-cat-sub">&mdash; the words on every pricing page, translated &mdash;</p>
+
+      <div class="gloss-grid">
+
+        <article class="gloss-entry" id="term-free-vs-trial">
+          <h3 class="gloss-term">Free tier vs. trial</h3>
+          <p class="gloss-def"><strong>Free tier:</strong> unlimited time, limited usage. Use it forever within the cap. <strong>Trial:</strong> unlimited usage, limited time &mdash; usually 7 to 60 days, then you must pay or your stuff stops working. Always read which one the vendor means.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-03c">Vol. 01 / Fly.io card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-egress">
+          <h3 class="gloss-term">Egress fees</h3>
+          <p class="gloss-def">What cloud providers charge you to send data <em>out</em> of their network &mdash; e.g. serving an image to a user&rsquo;s browser. AWS S3 charges $0.09/GB; Cloudflare R2 charges $0. Often dwarfs the storage cost itself.</p>
+          <span class="gloss-source">Appears in: <a href="audit.html">Vol. 04 / R2 gap</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-spend-cap">
+          <h3 class="gloss-term">Spend cap / budget alert</h3>
+          <p class="gloss-def">A hard limit on what you&rsquo;ll be charged. Pay-as-you-go services without one can surprise you with $1,000 bills if you go viral for an hour. Set it explicitly, every time.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-04a">Vol. 01 / Firebase card warning</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-payg">
+          <h3 class="gloss-term">Pay-as-you-go</h3>
+          <p class="gloss-def">You pay for exactly what you use, by the second/GB/request. No flat fee. Great when usage is small, dangerous when it isn&rsquo;t &mdash; pair with a spend cap. The default model for AWS, GCP, Fly.io, Firebase Blaze.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-03c">Vol. 01 / Fly.io card</a></span>
+        </article>
+
+      </div>
+    </div>
+
+    <!-- ============== INSIGHT & SEO ============== -->
+    <div class="gloss-cat" id="cat-insight">
+      <h2 class="gloss-cat-title">
+        <span class="gloss-cat-num">08</span>
+        Insight &amp; <em>SEO</em>
+        <span class="gloss-cat-line"></span>
+      </h2>
+      <p class="gloss-cat-sub">&mdash; observing what the world is doing with your site &mdash;</p>
+
+      <div class="gloss-grid">
+
+        <article class="gloss-entry" id="term-indexing">
+          <h3 class="gloss-term">Indexing / crawling</h3>
+          <p class="gloss-def"><strong>Crawling:</strong> Google&rsquo;s bot fetching your pages and following links. <strong>Indexing:</strong> storing them in its search database so they can appear in results. A page can be crawled but not indexed (low quality, duplicate, blocked).</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-05b">Vol. 01 / Search Console card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-cookie-banner">
+          <h3 class="gloss-term">Cookie banner</h3>
+          <p class="gloss-def">That popup asking permission to track you. Required by EU law (GDPR) when you set tracking cookies. <em>Avoidable</em> if your analytics tool doesn&rsquo;t set cookies in the first place &mdash; that&rsquo;s the whole point of Plausible/Umami/Fathom.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-05a">Vol. 01 / Umami card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-seo">
+          <h3 class="gloss-term">SEO <span class="gloss-expand">(Search Engine Optimization)</span></h3>
+          <p class="gloss-def">The practice of getting pages to rank well in search results. 80% of it: clear writing, fast load, descriptive titles, no broken links, mobile-friendly. The other 20% is where the snake oil lives.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-05b">Vol. 01 / Search Console card</a></span>
+        </article>
+
+        <article class="gloss-entry" id="term-self-hosted">
+          <h3 class="gloss-term">Self-hosted</h3>
+          <p class="gloss-def">Running open-source software on your own server (a VPS, usually) instead of paying for the SaaS version. More control, more responsibility &mdash; if it falls over at 3 a.m., you&rsquo;re the one paged.</p>
+          <span class="gloss-source">Appears in: <a href="index.html#node-05a">Vol. 01 / Umami card</a></span>
+        </article>
+
+      </div>
+    </div>
+
+  </section>
+
+  <nav class="volume-nav" aria-label="Field manual navigation">
+    <a class="vn-prev" href="audit.html">
+      <span class="vn-dir">&lsaquo; Prev &middot; Vol. 04</span>
+      <span class="vn-title">The Audit</span>
+    </a>
+    <a class="vn-next" href="about.html">
+      <span class="vn-dir">Next &rsaquo; Colophon</span>
+      <span class="vn-title">About This Map</span>
+    </a>
+  </nav>
+
+  <footer class="footer">
+    <span>SHEET 05 OF 06 &middot; GLOSSARY</span>
+    <span>REV. 2026.05 &middot; PLAIN ENGLISH</span>
+  </footer>
+
+</div>
+
+</body>
+</html>
