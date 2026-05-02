@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>How It Links Together &mdash; A Field Manual</title>
-<meta name="description" content="The wiring diagram: how requests flow through the 14 services in the stack, from DNS to email.">
+<meta name="description" content="The wiring diagram: setup, build, and serve. Every handoff in the stack labelled with its protocol, latency, and failure mode.">
 <link rel="canonical" href="https://flintomm.github.io/web-stack/flow.html">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <meta name="theme-color" content="#ecdfc8">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Stack">
 <meta property="og:title" content="How It Links Together — The Stack">
-<meta property="og:description" content="The wiring diagram: how requests flow through the 14 services in the stack, from DNS to email.">
+<meta property="og:description" content="The wiring diagram: setup, build, and serve. Every handoff in the stack labelled with its protocol, latency, and failure mode.">
 <meta property="og:url" content="https://flintomm.github.io/web-stack/flow.html">
 <meta property="og:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="How It Links Together — The Stack">
-<meta name="twitter:description" content="The wiring diagram: how requests flow through the 14 services in the stack.">
+<meta name="twitter:description" content="Setup, build, serve — every handoff labelled.">
 <meta name="twitter:image" content="https://flintomm.github.io/web-stack/assets/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,160 +47,785 @@
     <div class="title-block">
       <div class="eyebrow">Field Manual / Vol. 03</div>
       <h1>How it <em>links</em> together.</h1>
-      <p class="subtitle">Fourteen services on a page is just fourteen squares. This page traces what flows where: domain &rarr; DNS &rarr; host &rarr; backend &rarr; data &rarr; mail &rarr; analytics. The actual wiring.</p>
+      <p class="subtitle">Fourteen services on a page is just fourteen squares. This sheet traces what flows where &mdash; in three phases (set up once, build on push, serve on visit) &mdash; with every handoff labelled by protocol, every link annotated for failure mode, and four common scenarios traced end to end.</p>
     </div>
     <div class="meta">
       <strong>REV. 2026.05</strong><br>
       WIRING DIAGRAM<br>
-      ARROWS &amp; HANDOFFS<br>
+      3 PHASES &middot; 14 NODES &middot; 22 LINKS<br>
       <span style="color: var(--accent);">&bull;</span> TRACED
     </div>
   </header>
+
+  <!-- PHASE LEGEND -->
+  <div class="phase-legend">
+    <div class="phase-legend-item">
+      <span class="phase-legend-num">01</span>
+      <div>
+        <span class="phase-legend-name">Setup</span>
+        <span class="phase-legend-when">runs <em>once</em></span>
+      </div>
+      <p class="phase-legend-desc">Topology: which account knows about which other account. Domain, NS, OAuth, env vars. Done in an afternoon, then forgotten.</p>
+    </div>
+    <div class="phase-legend-item">
+      <span class="phase-legend-num">02</span>
+      <div>
+        <span class="phase-legend-name">Build</span>
+        <span class="phase-legend-when">runs on <em>every push</em></span>
+      </div>
+      <p class="phase-legend-desc">Linear: laptop &rarr; GitHub &rarr; webhook &rarr; build runners &rarr; live. Two to four minutes, mostly waiting.</p>
+    </div>
+    <div class="phase-legend-item">
+      <span class="phase-legend-num">03</span>
+      <div>
+        <span class="phase-legend-name">Serve</span>
+        <span class="phase-legend-when">runs <em>per visit</em></span>
+      </div>
+      <p class="phase-legend-desc">Mesh: user &rarr; DNS &rarr; CDN &rarr; origin &rarr; API &rarr; DB &rarr; mail &rarr; analytics. The hot path. Milliseconds matter.</p>
+    </div>
+  </div>
+
   <section class="flow-section">
-    <h2 class="flow-title">How it <em>links together</em></h2>
-    <p class="flow-sub">— a single push, traced end to end —</p>
+    <h2 class="flow-title">The <em>wiring</em>, in three phases.</h2>
+    <p class="flow-sub">— same fourteen services, three different time horizons —</p>
 
     <div class="flow-diagram">
-      <svg class="flow-svg" viewBox="0 0 1200 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="flow-svg-title flow-svg-desc">
-        <title id="flow-svg-title">Wiring diagram of the web stack</title>
-        <desc id="flow-svg-desc">Four horizontal lanes — Code, Deploy, Serve, Observe — show how services hand off to each other. Code lane: Vite or Astro builds locally, then a git push to GitHub fires a webhook. Deploy lane: the webhook triggers Netlify (static frontend) and Railway or Fly (backend). Domain layer: Porkbun owns the domain and delegates nameservers to Cloudflare, which provides DNS, CDN, and TLS, then routes to the hosts. Serve lane: the live frontend at yoursite.com calls the API at api.yoursite.com via fetch, the API talks to Firebase for auth and realtime data, and the API hands off to Resend for transactional email; the frontend also opens a direct realtime sync to Firebase via SDK. Observe lane: the frontend pings Umami for traffic analytics and Search Console reports indexing and queries. The end user reaches the frontend over HTTPS.</desc>
+      <svg class="flow-svg" viewBox="0 0 1320 820" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="flow-svg-title flow-svg-desc">
+        <title id="flow-svg-title">Three-phase wiring diagram of the web stack</title>
+        <desc id="flow-svg-desc">A vertical stack of three labelled bands. Phase 01 Setup shows which accounts are wired to which: Porkbun delegates DNS to Cloudflare via NS records, Cloudflare points CNAME records at Netlify, Railway, and GitHub Pages, and GitHub installs OAuth deploy webhooks into Netlify and Railway, with Firebase and Resend API keys configured as environment variables. Phase 02 Build shows the linear path on every git push: a laptop running Vite or Astro pushes to GitHub, which fires webhooks to Netlify and Railway, which run their build steps and publish in roughly two to four minutes. Phase 03 Serve shows the per-request mesh: a user&apos;s browser performs DNS resolution to Cloudflare, gets a response from the Cloudflare CDN edge or a fallthrough to the Netlify origin, the loaded frontend opens a fetch call to the API on Railway, which talks to Firebase for auth and database and to Resend for transactional email, while the frontend fires a beacon to Umami and Googlebot independently crawls the site and reports back via Search Console.</desc>
         <defs>
           <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
             <path d="M0,0 L8,5 L0,10 z" fill="#0e1116"/>
           </marker>
-          <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+          <marker id="arrowAccent" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
             <path d="M0,0 L8,5 L0,10 z" fill="#c8443a"/>
           </marker>
-          <pattern id="dots" width="6" height="6" patternUnits="userSpaceOnUse">
-            <circle cx="3" cy="3" r="0.7" fill="#0e1116" opacity="0.3"/>
+          <marker id="arrowMuted" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+            <path d="M0,0 L8,5 L0,10 z" fill="#564c3e"/>
+          </marker>
+          <pattern id="dotsFlow" width="6" height="6" patternUnits="userSpaceOnUse">
+            <circle cx="3" cy="3" r="0.6" fill="#0e1116" opacity="0.22"/>
           </pattern>
         </defs>
 
-        <!-- background dot grid for the SVG -->
-        <rect width="1200" height="380" fill="url(#dots)" opacity="0.5"/>
-
-        <!-- LANE LABELS -->
-        <text x="20" y="40" font-family="JetBrains Mono" font-size="9" letter-spacing="2" fill="#6b6052">CODE →</text>
-        <text x="20" y="135" font-family="JetBrains Mono" font-size="9" letter-spacing="2" fill="#6b6052">DEPLOY →</text>
-        <text x="20" y="230" font-family="JetBrains Mono" font-size="9" letter-spacing="2" fill="#6b6052">SERVE →</text>
-        <text x="20" y="325" font-family="JetBrains Mono" font-size="9" letter-spacing="2" fill="#6b6052">OBSERVE →</text>
-
-        <!-- horizontal lane lines -->
-        <line x1="100" y1="36" x2="1180" y2="36" stroke="#0e1116" stroke-width="0.5" opacity="0.15"/>
-        <line x1="100" y1="131" x2="1180" y2="131" stroke="#0e1116" stroke-width="0.5" opacity="0.15"/>
-        <line x1="100" y1="226" x2="1180" y2="226" stroke="#0e1116" stroke-width="0.5" opacity="0.15"/>
-        <line x1="100" y1="321" x2="1180" y2="321" stroke="#0e1116" stroke-width="0.5" opacity="0.15"/>
-
-        <!-- Row 1: CODE -->
+        <!-- ========== PHASE 01 · SETUP ========== -->
         <g>
-          <rect x="120" y="20" width="130" height="42" fill="#f4e4a8" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="185" y="38" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Vite / Astro</text>
-          <text x="185" y="53" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">local dev</text>
+          <!-- band background -->
+          <rect x="0" y="0" width="1320" height="240" fill="url(#dotsFlow)" opacity="0.55"/>
+          <line x1="0" y1="240" x2="1320" y2="240" stroke="#0e1116" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
 
-          <line x1="250" y1="41" x2="295" y2="41" stroke="#0e1116" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <!-- phase tag -->
+          <rect x="20" y="14" width="74" height="22" fill="#0e1116"/>
+          <text x="57" y="29" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" letter-spacing="2" fill="#ecdfc8">PHASE 01</text>
+          <text x="106" y="30" font-family="Fraunces" font-size="17" font-weight="600" fill="#0e1116">Setup</text>
+          <text x="170" y="30" font-family="JetBrains Mono" font-size="10" letter-spacing="1.5" fill="#564c3e">— wired once, then forgotten</text>
+          <text x="20" y="50" font-family="JetBrains Mono" font-size="9" letter-spacing="1.5" fill="#c8443a">▸ TOPOLOGY · who knows about whom</text>
 
-          <rect x="300" y="20" width="130" height="42" fill="#e8b4b8" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="365" y="38" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">GitHub</text>
-          <text x="365" y="53" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">git push origin main</text>
+          <!-- Porkbun (registrar) -->
+          <rect x="50" y="80" width="120" height="44" fill="#e8b4b8" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="110" y="100" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Porkbun</text>
+          <text x="110" y="115" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">domain bought · ~$11/yr</text>
+
+          <!-- arrow Porkbun → Cloudflare (critical) -->
+          <line x1="170" y1="102" x2="259" y2="102" stroke="#c8443a" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+          <text x="214" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#c8443a">NS records</text>
+          <text x="214" y="116" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#564c3e">propagation: ~1–24h</text>
+
+          <!-- Cloudflare -->
+          <rect x="262" y="80" width="120" height="44" fill="#b8c5d6" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="322" y="100" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Cloudflare</text>
+          <text x="322" y="115" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">DNS · CDN · TLS</text>
+
+          <!-- Cloudflare → hosts: CNAME fan-out -->
+          <path d="M 322 124 L 322 156 L 510 156 L 510 178" fill="none" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <path d="M 322 124 L 322 156 L 660 156 L 660 178" fill="none" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <path d="M 322 124 L 322 156 L 810 156 L 810 178" fill="none" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <text x="408" y="150" font-family="JetBrains Mono" font-size="9" fill="#0e1116" font-weight="600">CNAME · A</text>
+          <text x="408" y="162" font-family="JetBrains Mono" font-size="8" fill="#564c3e">root → host alias</text>
+
+          <!-- hosts row -->
+          <rect x="450" y="178" width="120" height="44" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="510" y="198" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Netlify</text>
+          <text x="510" y="213" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">site connected</text>
+
+          <rect x="600" y="178" width="120" height="44" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="660" y="198" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Railway</text>
+          <text x="660" y="213" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">service connected</text>
+
+          <rect x="750" y="178" width="120" height="44" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="810" y="198" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">GH Pages</text>
+          <text x="810" y="213" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">free static fallback</text>
+
+          <!-- GitHub box (right of CF, source of truth) -->
+          <rect x="450" y="80" width="120" height="44" fill="#e8b4b8" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="510" y="100" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">GitHub</text>
+          <text x="510" y="115" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">repo · source of truth</text>
+
+          <!-- GitHub → Netlify, Railway: OAuth + webhook -->
+          <path d="M 510 124 L 510 145 L 510 178" fill="none" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)" stroke-dasharray="4,3"/>
+          <path d="M 570 102 L 600 102 L 600 178" fill="none" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)" stroke-dasharray="4,3"/>
+          <text x="582" y="138" font-family="JetBrains Mono" font-size="9" fill="#0e1116" font-weight="600">OAuth + deploy webhook</text>
+
+          <!-- Firebase + Resend: env-var injection -->
+          <rect x="940" y="80" width="120" height="44" fill="#95b8a3" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="1000" y="100" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Firebase</text>
+          <text x="1000" y="115" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">project · keys minted</text>
+
+          <rect x="1090" y="80" width="120" height="44" fill="#95b8a3" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="1150" y="100" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Resend</text>
+          <text x="1150" y="115" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">API key · domain verified</text>
+
+          <!-- env-var arrows down to hosts -->
+          <path d="M 1000 124 L 1000 165 L 510 165 L 510 178" fill="none" stroke="#564c3e" stroke-width="1.2" stroke-dasharray="2,3" marker-end="url(#arrowMuted)"/>
+          <path d="M 1150 124 L 1150 170 L 660 170 L 660 178" fill="none" stroke="#564c3e" stroke-width="1.2" stroke-dasharray="2,3" marker-end="url(#arrowMuted)"/>
+          <text x="1075" y="142" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">env vars · paste once</text>
         </g>
 
-        <!-- arrow CODE → DEPLOY -->
-        <path d="M 365 62 L 365 100 L 240 100 L 240 116" fill="none" stroke="#c8443a" stroke-width="1.5" marker-end="url(#arrowRed)"/>
-        <text x="370" y="83" font-family="JetBrains Mono" font-size="9" fill="#c8443a">webhook</text>
-
-        <path d="M 365 62 L 365 100 L 480 100 L 480 116" fill="none" stroke="#c8443a" stroke-width="1.5" marker-end="url(#arrowRed)"/>
-
-        <!-- Row 2: DEPLOY -->
+        <!-- ========== PHASE 02 · BUILD ========== -->
         <g>
-          <rect x="175" y="116" width="130" height="42" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="240" y="134" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Netlify</text>
-          <text x="240" y="149" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">build · static</text>
+          <rect x="0" y="240" width="1320" height="220" fill="#ecdfc8"/>
+          <rect x="0" y="240" width="1320" height="220" fill="url(#dotsFlow)" opacity="0.4"/>
+          <line x1="0" y1="460" x2="1320" y2="460" stroke="#0e1116" stroke-width="1" stroke-dasharray="4,4" opacity="0.4"/>
 
-          <rect x="415" y="116" width="130" height="42" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="480" y="134" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Railway / Fly</text>
-          <text x="480" y="149" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">build · backend</text>
+          <rect x="20" y="254" width="74" height="22" fill="#0e1116"/>
+          <text x="57" y="269" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" letter-spacing="2" fill="#ecdfc8">PHASE 02</text>
+          <text x="106" y="270" font-family="Fraunces" font-size="17" font-weight="600" fill="#0e1116">Build</text>
+          <text x="160" y="270" font-family="JetBrains Mono" font-size="10" letter-spacing="1.5" fill="#564c3e">— what happens on git push</text>
+          <text x="20" y="290" font-family="JetBrains Mono" font-size="9" letter-spacing="1.5" fill="#c8443a">▸ LINEAR · T+0 → T+~3min</text>
+
+          <!-- Linear flow: Local → GitHub → Webhook → Netlify/Railway → Live -->
+          <!-- Step 1: Local -->
+          <rect x="50" y="320" width="130" height="46" fill="#f4e4a8" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="115" y="340" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Vite / Astro</text>
+          <text x="115" y="356" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">your laptop</text>
+          <text x="115" y="382" text-anchor="middle" font-family="JetBrains Mono" font-size="8" letter-spacing="1.2" fill="#c8443a">T+0</text>
+
+          <!-- arrow git push -->
+          <line x1="180" y1="343" x2="284" y2="343" stroke="#c8443a" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+          <text x="232" y="336" text-anchor="middle" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#c8443a">git push origin main</text>
+          <text x="232" y="358" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#564c3e">SSH / HTTPS · ~2s</text>
+
+          <!-- Step 2: GitHub -->
+          <rect x="290" y="320" width="130" height="46" fill="#e8b4b8" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="355" y="340" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">GitHub</text>
+          <text x="355" y="356" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">commit received</text>
+          <text x="355" y="382" text-anchor="middle" font-family="JetBrains Mono" font-size="8" letter-spacing="1.2" fill="#c8443a">T+~2s</text>
+
+          <!-- webhook fan-out (split up + down) -->
+          <path d="M 420 343 L 470 343 L 470 295 L 600 295" fill="none" stroke="#c8443a" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+          <path d="M 420 343 L 470 343 L 470 391 L 600 391" fill="none" stroke="#c8443a" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+          <text x="528" y="289" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#c8443a">webhook</text>
+          <text x="528" y="408" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#c8443a">webhook</text>
+          <text x="478" y="343" font-family="JetBrains Mono" font-size="8" fill="#564c3e">POST /hooks/github</text>
+
+          <!-- Step 3a: Netlify build -->
+          <rect x="600" y="272" width="170" height="46" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="685" y="292" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Netlify · build</text>
+          <text x="685" y="308" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">npm run build · publish</text>
+          <text x="685" y="335" text-anchor="middle" font-family="JetBrains Mono" font-size="8" letter-spacing="1.2" fill="#c8443a">T+~90s</text>
+
+          <!-- Step 3b: Railway build -->
+          <rect x="600" y="368" width="170" height="46" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="685" y="388" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Railway · build</text>
+          <text x="685" y="404" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">Dockerfile · rolling deploy</text>
+          <text x="685" y="431" text-anchor="middle" font-family="JetBrains Mono" font-size="8" letter-spacing="1.2" fill="#c8443a">T+~3min</text>
+
+          <!-- Step 4: Live -->
+          <line x1="770" y1="295" x2="889" y2="295" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <line x1="770" y1="391" x2="889" y2="391" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <text x="828" y="289" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">atomic swap</text>
+          <text x="828" y="385" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">health check passes</text>
+
+          <rect x="890" y="272" width="160" height="46" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="970" y="292" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">yoursite.com</text>
+          <text x="970" y="308" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">LIVE · static frontend</text>
+
+          <rect x="890" y="368" width="160" height="46" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="970" y="388" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">api.yoursite.com</text>
+          <text x="970" y="404" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">LIVE · backend service</text>
+
+          <!-- Cloudflare picks up automatically (no rebuild) -->
+          <rect x="1090" y="320" width="170" height="46" fill="#b8c5d6" stroke="#0e1116" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="1175" y="340" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Cloudflare</text>
+          <text x="1175" y="356" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">cache purges automatically</text>
+
+          <line x1="1050" y1="343" x2="1089" y2="343" stroke="#564c3e" stroke-width="1.2" stroke-dasharray="2,2" marker-end="url(#arrowMuted)"/>
         </g>
 
-        <!-- DNS layer (top right) -->
+        <!-- ========== PHASE 03 · SERVE ========== -->
         <g>
-          <rect x="700" y="20" width="130" height="42" fill="#e8b4b8" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="765" y="38" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Porkbun</text>
-          <text x="765" y="53" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">domain owned</text>
+          <rect x="0" y="460" width="1320" height="360" fill="url(#dotsFlow)" opacity="0.55"/>
 
-          <line x1="830" y1="41" x2="875" y2="41" stroke="#0e1116" stroke-width="1.5" marker-end="url(#arrow)"/>
-          <text x="852" y="36" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#6b6052">NS</text>
+          <rect x="20" y="474" width="74" height="22" fill="#0e1116"/>
+          <text x="57" y="489" text-anchor="middle" font-family="JetBrains Mono" font-size="10" font-weight="600" letter-spacing="2" fill="#ecdfc8">PHASE 03</text>
+          <text x="106" y="490" font-family="Fraunces" font-size="17" font-weight="600" fill="#0e1116">Serve</text>
+          <text x="160" y="490" font-family="JetBrains Mono" font-size="10" letter-spacing="1.5" fill="#564c3e">— what happens on every visit</text>
+          <text x="20" y="510" font-family="JetBrains Mono" font-size="9" letter-spacing="1.5" fill="#c8443a">▸ MESH · milliseconds, not minutes</text>
 
-          <rect x="880" y="20" width="130" height="42" fill="#b8c5d6" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="945" y="38" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Cloudflare</text>
-          <text x="945" y="53" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">DNS · CDN · TLS</text>
-        </g>
+          <!-- USER (right side) -->
+          <g transform="translate(1240, 600)">
+            <circle cx="0" cy="0" r="28" fill="#c8443a" stroke="#0e1116" stroke-width="1.5"/>
+            <text x="0" y="5" text-anchor="middle" font-family="Fraunces" font-size="13" fill="#ecdfc8" font-weight="600">USER</text>
+          </g>
 
-        <!-- Cloudflare → hosts -->
-        <path d="M 945 62 L 945 200 L 240 200 L 240 226" fill="none" stroke="#0e1116" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-        <path d="M 945 62 L 945 200 L 480 200 L 480 226" fill="none" stroke="#0e1116" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrow)"/>
-        <text x="950" y="135" font-family="JetBrains Mono" font-size="9" fill="#6b6052">CNAME / A</text>
+          <!-- step ① user → DNS resolver → Cloudflare -->
+          <line x1="1212" y1="600" x2="1098" y2="600" stroke="#c8443a" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+          <text x="1155" y="592" text-anchor="middle" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#c8443a">① DNS lookup</text>
+          <text x="1155" y="615" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#564c3e">UDP/53 · ~10ms</text>
 
-        <!-- Row 3: SERVE -->
-        <g>
-          <rect x="175" y="226" width="130" height="42" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="240" y="244" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Frontend</text>
-          <text x="240" y="259" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">live @ yoursite.com</text>
+          <!-- Cloudflare (edge) -->
+          <rect x="970" y="578" width="130" height="44" fill="#b8c5d6" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="1035" y="598" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Cloudflare</text>
+          <text x="1035" y="613" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">edge · TLS · cache</text>
 
-          <rect x="415" y="226" width="130" height="42" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="480" y="244" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">API / Server</text>
-          <text x="480" y="259" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">api.yoursite.com</text>
+          <!-- step ② Cloudflare → Frontend (cache miss) -->
+          <line x1="970" y1="600" x2="836" y2="600" stroke="#c8443a" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+          <text x="900" y="592" text-anchor="middle" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#c8443a">② HTTPS · cache miss</text>
+          <text x="900" y="615" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#564c3e">~30–80ms</text>
 
-          <line x1="305" y1="247" x2="412" y2="247" stroke="#0e1116" stroke-width="1.5" marker-end="url(#arrow)"/>
-          <text x="358" y="241" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">fetch()</text>
+          <!-- Frontend (Netlify origin) -->
+          <rect x="700" y="578" width="135" height="44" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="767" y="598" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Frontend</text>
+          <text x="767" y="613" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">static · HTML + JS</text>
 
-          <rect x="700" y="226" width="130" height="42" fill="#95b8a3" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="765" y="244" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Firebase</text>
-          <text x="765" y="259" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">auth · realtime db</text>
+          <!-- step ③ Frontend → API -->
+          <line x1="700" y1="600" x2="566" y2="600" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <text x="630" y="592" text-anchor="middle" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#0e1116">③ fetch()</text>
+          <text x="630" y="615" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#564c3e">JSON · CORS</text>
 
-          <rect x="880" y="226" width="130" height="42" fill="#95b8a3" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="945" y="244" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Resend</text>
-          <text x="945" y="259" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">transactional mail</text>
+          <!-- API (Railway) -->
+          <rect x="430" y="578" width="135" height="44" fill="#d4a373" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="497" y="598" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">API · Railway</text>
+          <text x="497" y="613" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">always-on backend</text>
 
-          <line x1="545" y1="247" x2="697" y2="247" stroke="#0e1116" stroke-width="1.5" marker-end="url(#arrow)"/>
-          <line x1="830" y1="247" x2="877" y2="247" stroke="#0e1116" stroke-width="1.5" marker-end="url(#arrow)"/>
-        </g>
+          <!-- step ④ API → Firebase -->
+          <line x1="430" y1="600" x2="296" y2="600" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <text x="360" y="592" text-anchor="middle" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#0e1116">④ Admin SDK</text>
+          <text x="360" y="615" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#564c3e">gRPC · ~50ms</text>
 
-        <!-- frontend → firebase direct -->
-        <path d="M 240 268 L 240 295 L 765 295 L 765 268" fill="none" stroke="#0e1116" stroke-width="1.2" stroke-dasharray="2,3" marker-end="url(#arrow)"/>
-        <text x="500" y="290" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">SDK · realtime sync</text>
+          <!-- Firebase -->
+          <rect x="160" y="578" width="135" height="44" fill="#95b8a3" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="227" y="598" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Firebase</text>
+          <text x="227" y="613" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">auth · realtime DB</text>
 
-        <!-- Row 4: OBSERVE -->
-        <g>
-          <rect x="175" y="321" width="130" height="42" fill="#b8c5d6" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="240" y="339" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Umami</text>
-          <text x="240" y="354" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">visits · referrers</text>
+          <!-- step ⑤ API → Resend -->
+          <path d="M 497 622 L 497 685 L 227 685 L 227 712" fill="none" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <text x="360" y="678" text-anchor="middle" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#0e1116">⑤ POST /emails</text>
+          <text x="360" y="700" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#564c3e">HTTPS · async</text>
 
-          <rect x="415" y="321" width="170" height="42" fill="#b8c5d6" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="500" y="339" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Search Console</text>
-          <text x="500" y="354" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">indexing · queries</text>
+          <!-- Resend -->
+          <rect x="160" y="712" width="135" height="44" fill="#95b8a3" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="227" y="732" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Resend</text>
+          <text x="227" y="747" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">transactional mail</text>
 
-          <!-- frontend pings analytics -->
-          <path d="M 240 268 L 240 321" fill="none" stroke="#0e1116" stroke-width="1.2" marker-end="url(#arrow)"/>
-          <path d="M 280 268 L 280 305 L 500 305 L 500 321" fill="none" stroke="#0e1116" stroke-width="1.2" marker-end="url(#arrow)"/>
-        </g>
+          <!-- step ⑥ Frontend → Firebase direct (Web SDK) -->
+          <path d="M 767 622 L 767 660 L 227 660 L 227 622" fill="none" stroke="#564c3e" stroke-width="1.2" stroke-dasharray="3,3" marker-end="url(#arrowMuted)"/>
+          <text x="497" y="654" text-anchor="middle" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#564c3e">⑥ Web SDK · realtime sync (WebSocket)</text>
 
-        <!-- annotation block (right side) -->
-        <g>
-          <rect x="700" y="100" width="310" height="58" fill="none" stroke="#0e1116" stroke-width="1" stroke-dasharray="4,2"/>
-          <text x="715" y="118" font-family="JetBrains Mono" font-size="10" font-weight="600" letter-spacing="2" fill="#c8443a">// CRITICAL PATH</text>
-          <text x="715" y="135" font-family="JetBrains Mono" font-size="9" fill="#0e1116">push → build → DNS resolves → user loads page →</text>
-          <text x="715" y="148" font-family="JetBrains Mono" font-size="9" fill="#0e1116">app calls API + Firebase + fires analytics</text>
-        </g>
+          <!-- step ⑦ Frontend → Umami beacon -->
+          <rect x="700" y="490" width="135" height="44" fill="#b8c5d6" stroke="#0e1116" stroke-width="1.5"/>
+          <text x="767" y="510" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Umami</text>
+          <text x="767" y="525" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">visits · referrers</text>
 
-        <!-- visitor avatar (bottom right) -->
-        <g transform="translate(1080, 235)">
-          <circle cx="0" cy="0" r="22" fill="#c8443a" stroke="#0e1116" stroke-width="1.5"/>
-          <text x="0" y="4" text-anchor="middle" font-family="Fraunces" font-size="11" fill="#ecdfc8" font-weight="600">USER</text>
-          <path d="M -22 0 L -90 0" fill="none" stroke="#0e1116" stroke-width="1.5" marker-start="url(#arrow)"/>
-          <text x="-56" y="-5" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#6b6052">HTTPS</text>
+          <line x1="767" y1="578" x2="767" y2="535" stroke="#0e1116" stroke-width="1.4" marker-end="url(#arrow)"/>
+          <text x="775" y="560" font-family="JetBrains Mono" font-size="9" font-weight="600" fill="#0e1116">⑦ beacon · /api/send</text>
+
+          <!-- Search Console + Googlebot (out-of-band) -->
+          <rect x="970" y="490" width="170" height="44" fill="#b8c5d6" stroke="#0e1116" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="1055" y="510" text-anchor="middle" font-family="Fraunces" font-size="14" font-weight="600" fill="#0e1116">Search Console</text>
+          <text x="1055" y="525" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#564c3e">indexing · queries</text>
+
+          <g transform="translate(1240, 512)">
+            <circle cx="0" cy="0" r="22" fill="#0e1116" stroke="#0e1116" stroke-width="1.5"/>
+            <text x="0" y="3" text-anchor="middle" font-family="Fraunces" font-size="10" fill="#ecdfc8" font-weight="600">BOT</text>
+          </g>
+
+          <line x1="1218" y1="512" x2="1144" y2="512" stroke="#564c3e" stroke-width="1.2" stroke-dasharray="2,3" marker-end="url(#arrowMuted)"/>
+          <text x="1180" y="505" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#564c3e">crawl</text>
+          <path d="M 970 512 L 940 512 L 940 540 L 770 540" fill="none" stroke="#564c3e" stroke-width="1.2" stroke-dasharray="2,3" marker-end="url(#arrowMuted)"/>
+          <text x="900" y="535" font-family="JetBrains Mono" font-size="8" fill="#564c3e">⑧ sitemap.xml · out-of-band</text>
+
+          <!-- annotation block -->
+          <g>
+            <rect x="50" y="772" width="730" height="40" fill="none" stroke="#0e1116" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="60" y="789" font-family="JetBrains Mono" font-size="10" font-weight="600" letter-spacing="2" fill="#c8443a">// HOT PATH (red)</text>
+            <text x="60" y="803" font-family="JetBrains Mono" font-size="9" fill="#0e1116">DNS → CDN → origin → API → DB. Every user request walks this. <tspan font-weight="600">If any link is slow, every page is slow.</tspan></text>
+          </g>
+          <g>
+            <rect x="800" y="772" width="470" height="40" fill="none" stroke="#564c3e" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="810" y="789" font-family="JetBrains Mono" font-size="10" font-weight="600" letter-spacing="2" fill="#564c3e">// FAIL-SOFT (muted)</text>
+            <text x="810" y="803" font-family="JetBrains Mono" font-size="9" fill="#0e1116">Realtime sync, analytics, indexing. Site keeps working if these fail.</text>
+          </g>
         </g>
 
       </svg>
+    </div>
+  </section>
+
+  <!-- ========== TRACE: ONE PUSH, BEAT BY BEAT ========== -->
+  <section class="trace-section">
+    <div class="trace-head">
+      <h2 class="trace-title">Trace one <em>push</em>, beat by beat.</h2>
+      <span class="trace-stamp">▸ T+0 → T+~3min</span>
+    </div>
+    <p class="trace-sub">— from <code>git push</code> on a laptop to a returning visitor seeing the new build, with a label on every wire —</p>
+
+    <div class="trace-grid">
+
+      <div class="beat" data-phase="build">
+        <span class="beat-num">01</span>
+        <span class="beat-when">T+0</span>
+        <span class="beat-title">Local build</span>
+        <p class="beat-desc">Vite&nbsp;/ Astro compiles your source on the laptop. ESM modules bundle to <code>dist/</code>. No network yet.</p>
+        <span class="beat-tech">your laptop · Node · ~3–10s</span>
+      </div>
+
+      <div class="beat" data-phase="build">
+        <span class="beat-num">02</span>
+        <span class="beat-when">T+~5s</span>
+        <span class="beat-title">Push to origin</span>
+        <p class="beat-desc"><code>git push origin main</code> uploads the diff over SSH. GitHub stores the commit, advances the branch ref, and writes a delivery record for every webhook subscriber.</p>
+        <span class="beat-tech">SSH/22 or HTTPS · payload &lt; 1 MB</span>
+      </div>
+
+      <div class="beat" data-phase="build">
+        <span class="beat-num">03</span>
+        <span class="beat-when">T+~7s</span>
+        <span class="beat-title">Webhook fan-out</span>
+        <p class="beat-desc">GitHub fires <code>POST /hooks/github</code> with a JSON push event to every connected service. Netlify and Railway both receive it within a second of each other.</p>
+        <span class="beat-tech">HTTPS · signed (X-Hub-Signature-256)</span>
+      </div>
+
+      <div class="beat" data-phase="build">
+        <span class="beat-num">04</span>
+        <span class="beat-when">T+~10s</span>
+        <span class="beat-title">Build runners spin up</span>
+        <p class="beat-desc">Netlify boots a fresh Linux container, clones the repo at the new SHA, runs <code>npm ci &amp;&amp; npm run build</code>. Railway does the equivalent against your <code>Dockerfile</code> or buildpack.</p>
+        <span class="beat-tech">ephemeral container · network in, no persistent disk</span>
+      </div>
+
+      <div class="beat" data-phase="build">
+        <span class="beat-num">05</span>
+        <span class="beat-when">T+~90s</span>
+        <span class="beat-title">Frontend publishes</span>
+        <p class="beat-desc">Netlify uploads the new <code>dist/</code> to its global CDN, atomically swaps the alias for <code>yoursite.com</code>, and purges the edge cache. The next request anywhere in the world serves the new HTML.</p>
+        <span class="beat-tech">atomic deploy · zero-downtime</span>
+      </div>
+
+      <div class="beat" data-phase="build">
+        <span class="beat-num">06</span>
+        <span class="beat-when">T+~3min</span>
+        <span class="beat-title">API rolls over</span>
+        <p class="beat-desc">Railway boots the new container alongside the old, runs the health check, then drains the old one. <code>api.yoursite.com</code> is now serving the new code &mdash; without dropping in-flight requests.</p>
+        <span class="beat-tech">rolling deploy · health-checked cutover</span>
+      </div>
+
+      <div class="beat" data-phase="serve">
+        <span class="beat-num">07</span>
+        <span class="beat-when">first visit</span>
+        <span class="beat-title">Browser asks for the host</span>
+        <p class="beat-desc">A user types <code>yoursite.com</code>. Their resolver walks the DNS chain &mdash; root, <code>.com</code>, your NS records (Cloudflare), final A/AAAA. Cached for the TTL after that.</p>
+        <span class="beat-tech">UDP/53 · ~10–80ms cold, &lt;1ms warm</span>
+      </div>
+
+      <div class="beat" data-phase="serve">
+        <span class="beat-num">08</span>
+        <span class="beat-when">+~30ms</span>
+        <span class="beat-title">TLS at the edge</span>
+        <p class="beat-desc">Browser opens TCP, then TLS, with the nearest Cloudflare PoP. Cloudflare presents the cert it minted for your domain &mdash; you never touched a private key.</p>
+        <span class="beat-tech">TCP/443 · TLS 1.3 · 1-RTT handshake</span>
+      </div>
+
+      <div class="beat" data-phase="serve">
+        <span class="beat-num">09</span>
+        <span class="beat-when">+~50ms</span>
+        <span class="beat-title">HTML is returned</span>
+        <p class="beat-desc">Cache hit at the edge → response in tens of ms. Cache miss → Cloudflare proxies to Netlify origin, gets the HTML, fills the cache for next time. Either way the user has bytes.</p>
+        <span class="beat-tech">HTTPS · gzip/br · cached unless busted</span>
+      </div>
+
+      <div class="beat" data-phase="serve">
+        <span class="beat-num">10</span>
+        <span class="beat-when">+~100ms</span>
+        <span class="beat-title">JS hydrates</span>
+        <p class="beat-desc">The browser parses the HTML, fetches the JS bundle (cached the same way), and runs it. The Firebase Web SDK opens a WebSocket. The Umami snippet fires its first beacon.</p>
+        <span class="beat-tech">parallel fetches · HTTP/2 multiplex</span>
+      </div>
+
+      <div class="beat" data-phase="serve">
+        <span class="beat-num">11</span>
+        <span class="beat-when">+~200ms</span>
+        <span class="beat-title">App calls the API</span>
+        <p class="beat-desc">The hydrated app does <code>fetch('https://api.yoursite.com/me')</code>. CORS preflight if the headers warrant it, then the real request. Cloudflare proxies it through to Railway.</p>
+        <span class="beat-tech">HTTPS · JSON · CORS-checked</span>
+      </div>
+
+      <div class="beat" data-phase="serve">
+        <span class="beat-num">12</span>
+        <span class="beat-when">+~250ms</span>
+        <span class="beat-title">API talks to Firebase</span>
+        <p class="beat-desc">The Railway service uses the Firebase Admin SDK with its service-account key (env var) to verify the user's ID token, read their record, and return JSON.</p>
+        <span class="beat-tech">gRPC · ~30–60ms · Google's network</span>
+      </div>
+
+      <div class="beat" data-phase="serve">
+        <span class="beat-num">13</span>
+        <span class="beat-when">+~300ms</span>
+        <span class="beat-title">Side effects fire async</span>
+        <p class="beat-desc">If the request triggers an email (signup, reset), the API hits <code>POST resend.com/emails</code> &mdash; not blocking the response. The user sees their page; mail goes out in the background.</p>
+        <span class="beat-tech">HTTPS · async · retried on Resend's side</span>
+      </div>
+
+      <div class="beat" data-phase="serve">
+        <span class="beat-num">14</span>
+        <span class="beat-when">+continuous</span>
+        <span class="beat-title">Realtime sync runs</span>
+        <p class="beat-desc">The Firebase WebSocket from step 10 is now pushing live updates to the page &mdash; new messages, presence, whatever the app subscribed to. No polling, no extra fetches.</p>
+        <span class="beat-tech">WSS/443 · long-lived · auto-reconnect</span>
+      </div>
+
+      <div class="beat" data-phase="serve">
+        <span class="beat-num">15</span>
+        <span class="beat-when">out-of-band</span>
+        <span class="beat-title">Googlebot crawls</span>
+        <p class="beat-desc">Independently of any user, Googlebot fetches <code>/sitemap.xml</code>, walks the URLs, and reports back to Search Console &mdash; which surfaces it in the dashboard hours or days later.</p>
+        <span class="beat-tech">HTTPS · scheduled · async to your traffic</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== SCENARIOS ========== -->
+  <section class="scenarios-section">
+    <div class="trace-head">
+      <h2 class="trace-title">Four <em>scenarios</em>, one wiring.</h2>
+      <span class="trace-stamp">▸ SAME BOX, DIFFERENT WIRES</span>
+    </div>
+    <p class="trace-sub">— the same fourteen services, four different paths through them —</p>
+
+    <div class="scenario-grid">
+
+      <article class="scenario-card">
+        <header class="scenario-head">
+          <span class="scenario-tag">scenario · 01</span>
+          <h3 class="scenario-name">You ship a typo fix</h3>
+          <p class="scenario-blurb">Single-line change. Push, wait three minutes, refresh.</p>
+        </header>
+        <ol class="scenario-flow">
+          <li><span class="sf-actor">Laptop</span><span class="sf-arrow">→</span><span class="sf-actor">GitHub</span><span class="sf-detail"><code>git push</code></span></li>
+          <li><span class="sf-actor">GitHub</span><span class="sf-arrow">→</span><span class="sf-actor">Netlify</span><span class="sf-detail">webhook · build</span></li>
+          <li><span class="sf-actor">Netlify</span><span class="sf-arrow">→</span><span class="sf-actor">Cloudflare</span><span class="sf-detail">cache purged on swap</span></li>
+          <li><span class="sf-actor">User refreshes</span><span class="sf-arrow">→</span><span class="sf-actor">edge</span><span class="sf-detail">new HTML, no API call needed</span></li>
+        </ol>
+        <p class="scenario-note">Railway, Firebase, Resend, Umami untouched. Pure static path.</p>
+      </article>
+
+      <article class="scenario-card">
+        <header class="scenario-head">
+          <span class="scenario-tag">scenario · 02</span>
+          <h3 class="scenario-name">A first-time visitor lands</h3>
+          <p class="scenario-blurb">Cold cache, never been here, no account.</p>
+        </header>
+        <ol class="scenario-flow">
+          <li><span class="sf-actor">Browser</span><span class="sf-arrow">→</span><span class="sf-actor">DNS</span><span class="sf-detail">resolve via Cloudflare NS</span></li>
+          <li><span class="sf-actor">Browser</span><span class="sf-arrow">→</span><span class="sf-actor">Cloudflare</span><span class="sf-detail">TLS 1.3 handshake</span></li>
+          <li><span class="sf-actor">Cloudflare</span><span class="sf-arrow">→</span><span class="sf-actor">Netlify origin</span><span class="sf-detail">cache miss · fetch HTML</span></li>
+          <li><span class="sf-actor">Browser</span><span class="sf-arrow">→</span><span class="sf-actor">Umami</span><span class="sf-detail">beacon · pageview</span></li>
+        </ol>
+        <p class="scenario-note">No API calls, no DB. Static HTML + analytics ping. Sub-second.</p>
+      </article>
+
+      <article class="scenario-card">
+        <header class="scenario-head">
+          <span class="scenario-tag">scenario · 03</span>
+          <h3 class="scenario-name">A user signs up</h3>
+          <p class="scenario-blurb">Form submit. Account created. Welcome email lands.</p>
+        </header>
+        <ol class="scenario-flow">
+          <li><span class="sf-actor">Frontend</span><span class="sf-arrow">→</span><span class="sf-actor">Firebase Auth</span><span class="sf-detail">Web SDK · createUser</span></li>
+          <li><span class="sf-actor">Frontend</span><span class="sf-arrow">→</span><span class="sf-actor">API · Railway</span><span class="sf-detail"><code>POST /signup</code> · ID token</span></li>
+          <li><span class="sf-actor">API</span><span class="sf-arrow">→</span><span class="sf-actor">Firebase DB</span><span class="sf-detail">Admin SDK · write profile</span></li>
+          <li><span class="sf-actor">API</span><span class="sf-arrow">→</span><span class="sf-actor">Resend</span><span class="sf-detail"><code>POST /emails</code> · async</span></li>
+          <li><span class="sf-actor">Resend</span><span class="sf-arrow">→</span><span class="sf-actor">User inbox</span><span class="sf-detail">SMTP · ~10s</span></li>
+        </ol>
+        <p class="scenario-note">All four side-services touched. Hot path stays under 400ms; mail is fire-and-forget.</p>
+      </article>
+
+      <article class="scenario-card scenario-card-danger">
+        <header class="scenario-head">
+          <span class="scenario-tag">scenario · 04 · failure</span>
+          <h3 class="scenario-name">Cloudflare is down</h3>
+          <p class="scenario-blurb">A real outage. What survives, what doesn't.</p>
+        </header>
+        <ol class="scenario-flow">
+          <li><span class="sf-actor">Browser</span><span class="sf-arrow">→</span><span class="sf-actor">DNS</span><span class="sf-detail-danger">SERVFAIL · NS unreachable</span></li>
+          <li><span class="sf-actor">All requests</span><span class="sf-arrow">→</span><span class="sf-actor">timeout</span><span class="sf-detail-danger">no resolver, no TLS, no anything</span></li>
+          <li><span class="sf-actor">Direct</span><span class="sf-arrow">→</span><span class="sf-actor">netlify.app subdomain</span><span class="sf-detail">still works · bypasses CF</span></li>
+          <li><span class="sf-actor">Mitigation</span><span class="sf-arrow">→</span><span class="sf-actor">DNS-only mode</span><span class="sf-detail">grey-cloud the records, skip CF proxy</span></li>
+        </ol>
+        <p class="scenario-note">Putting one vendor on the hot path = single point of failure. Worth knowing the workaround before the day arrives.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ========== HANDOFF PROTOCOLS TABLE ========== -->
+  <section class="handoff-section">
+    <div class="trace-head">
+      <h2 class="trace-title">Every <em>handoff</em>, named.</h2>
+      <span class="trace-stamp">▸ 22 LINKS · 1 TABLE</span>
+    </div>
+    <p class="trace-sub">— what mechanism actually connects each pair, what it carries, when it fires —</p>
+
+    <div class="handoff-table" role="table" aria-label="Handoff protocols">
+      <div class="handoff-header" role="row">
+        <span role="columnheader">From</span>
+        <span role="columnheader">To</span>
+        <span role="columnheader">Mechanism</span>
+        <span role="columnheader">Payload</span>
+        <span role="columnheader">When</span>
+      </div>
+
+      <div class="handoff-row" role="row" data-phase="setup">
+        <span class="ho-from" role="cell">Porkbun</span>
+        <span class="ho-to" role="cell">Cloudflare</span>
+        <span class="ho-mech" role="cell">NS delegation</span>
+        <span class="ho-pay" role="cell">two NS hostnames at the registrar</span>
+        <span class="ho-when" role="cell">setup · once</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="setup">
+        <span class="ho-from" role="cell">Cloudflare</span>
+        <span class="ho-to" role="cell">Netlify / Railway / GH Pages</span>
+        <span class="ho-mech" role="cell">CNAME / A record</span>
+        <span class="ho-pay" role="cell">DNS pointer to the host's alias</span>
+        <span class="ho-when" role="cell">setup · once</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="setup">
+        <span class="ho-from" role="cell">GitHub</span>
+        <span class="ho-to" role="cell">Netlify / Railway</span>
+        <span class="ho-mech" role="cell">OAuth + deploy webhook</span>
+        <span class="ho-pay" role="cell">repo permissions + signed push events</span>
+        <span class="ho-when" role="cell">setup · once</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="setup">
+        <span class="ho-from" role="cell">Firebase</span>
+        <span class="ho-to" role="cell">Netlify / Railway</span>
+        <span class="ho-mech" role="cell">env vars (paste)</span>
+        <span class="ho-pay" role="cell">API keys, service-account JSON</span>
+        <span class="ho-when" role="cell">setup · once</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="setup">
+        <span class="ho-from" role="cell">Resend</span>
+        <span class="ho-to" role="cell">Railway</span>
+        <span class="ho-mech" role="cell">env var (paste)</span>
+        <span class="ho-pay" role="cell">API key + verified-domain config</span>
+        <span class="ho-when" role="cell">setup · once</span>
+      </div>
+
+      <div class="handoff-row" role="row" data-phase="build">
+        <span class="ho-from" role="cell">Laptop</span>
+        <span class="ho-to" role="cell">GitHub</span>
+        <span class="ho-mech" role="cell">git over SSH/HTTPS</span>
+        <span class="ho-pay" role="cell">commit pack-file</span>
+        <span class="ho-when" role="cell">on every push</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="build">
+        <span class="ho-from" role="cell">GitHub</span>
+        <span class="ho-to" role="cell">Netlify / Railway</span>
+        <span class="ho-mech" role="cell">webhook · POST</span>
+        <span class="ho-pay" role="cell">JSON push event, signed</span>
+        <span class="ho-when" role="cell">on every push</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="build">
+        <span class="ho-from" role="cell">Netlify build</span>
+        <span class="ho-to" role="cell">Cloudflare CDN</span>
+        <span class="ho-mech" role="cell">atomic upload + alias swap</span>
+        <span class="ho-pay" role="cell">static <code>dist/</code> bundle</span>
+        <span class="ho-when" role="cell">end of build</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="build">
+        <span class="ho-from" role="cell">Railway build</span>
+        <span class="ho-to" role="cell">Railway runtime</span>
+        <span class="ho-mech" role="cell">rolling container deploy</span>
+        <span class="ho-pay" role="cell">OCI image + health-check</span>
+        <span class="ho-when" role="cell">end of build</span>
+      </div>
+
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">Browser</span>
+        <span class="ho-to" role="cell">Cloudflare DNS</span>
+        <span class="ho-mech" role="cell">DNS query · UDP/53</span>
+        <span class="ho-pay" role="cell">A/AAAA lookup</span>
+        <span class="ho-when" role="cell">first visit · TTL-cached</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">Browser</span>
+        <span class="ho-to" role="cell">Cloudflare edge</span>
+        <span class="ho-mech" role="cell">HTTPS · TLS 1.3</span>
+        <span class="ho-pay" role="cell">request headers + body</span>
+        <span class="ho-when" role="cell">every request</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">Cloudflare</span>
+        <span class="ho-to" role="cell">Netlify origin</span>
+        <span class="ho-mech" role="cell">HTTPS proxy (cache miss)</span>
+        <span class="ho-pay" role="cell">forwarded request</span>
+        <span class="ho-when" role="cell">on cache miss only</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">Frontend (browser)</span>
+        <span class="ho-to" role="cell">API · Railway</span>
+        <span class="ho-mech" role="cell"><code>fetch()</code> · HTTPS + CORS</span>
+        <span class="ho-pay" role="cell">JSON · Firebase ID token in header</span>
+        <span class="ho-when" role="cell">on user action</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">Frontend (browser)</span>
+        <span class="ho-to" role="cell">Firebase</span>
+        <span class="ho-mech" role="cell">Web SDK · WSS/443</span>
+        <span class="ho-pay" role="cell">auth tokens + realtime delta sync</span>
+        <span class="ho-when" role="cell">long-lived · auto-reconnect</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">API · Railway</span>
+        <span class="ho-to" role="cell">Firebase</span>
+        <span class="ho-mech" role="cell">Admin SDK · gRPC</span>
+        <span class="ho-pay" role="cell">privileged DB reads/writes</span>
+        <span class="ho-when" role="cell">per request</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">API · Railway</span>
+        <span class="ho-to" role="cell">Resend</span>
+        <span class="ho-mech" role="cell">HTTPS REST · <code>POST /emails</code></span>
+        <span class="ho-pay" role="cell">to/from/subject/html JSON</span>
+        <span class="ho-when" role="cell">async · on signup, reset, etc.</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">Frontend (browser)</span>
+        <span class="ho-to" role="cell">Umami</span>
+        <span class="ho-mech" role="cell">beacon · <code>POST /api/send</code></span>
+        <span class="ho-pay" role="cell">URL, referrer, screen, UA</span>
+        <span class="ho-when" role="cell">on pageview / event</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">Resend</span>
+        <span class="ho-to" role="cell">User inbox</span>
+        <span class="ho-mech" role="cell">SMTP · DKIM/SPF signed</span>
+        <span class="ho-pay" role="cell">RFC 5322 message</span>
+        <span class="ho-when" role="cell">~5–60s after the API call</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">Googlebot</span>
+        <span class="ho-to" role="cell">Cloudflare → Netlify</span>
+        <span class="ho-mech" role="cell">crawl · HTTPS GET</span>
+        <span class="ho-pay" role="cell">sitemap.xml + page HTML</span>
+        <span class="ho-when" role="cell">scheduled · daily-ish</span>
+      </div>
+      <div class="handoff-row" role="row" data-phase="serve">
+        <span class="ho-from" role="cell">Googlebot</span>
+        <span class="ho-to" role="cell">Search Console</span>
+        <span class="ho-mech" role="cell">internal Google pipeline</span>
+        <span class="ho-pay" role="cell">index status · query stats</span>
+        <span class="ho-when" role="cell">async · hours-to-days lag</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FAILURE MODES ========== -->
+  <section class="failure-section">
+    <div class="trace-head">
+      <h2 class="trace-title">When a <em>link</em> breaks.</h2>
+      <span class="trace-stamp">▸ SYMPTOM · LOOK · TEST</span>
+    </div>
+    <p class="trace-sub">— each critical handoff, what it looks like when it fails, and the first place to check —</p>
+
+    <div class="failure-grid">
+
+      <div class="failure-card">
+        <span class="failure-tag">// link 01 · NS delegation</span>
+        <h3 class="failure-name">Porkbun → Cloudflare</h3>
+        <p class="failure-symptom"><span class="fl-label">Symptom:</span> domain doesn't resolve anywhere. <code>dig yoursite.com</code> returns SERVFAIL or the wrong IP.</p>
+        <p class="failure-look"><span class="fl-label">Look:</span> Porkbun &rarr; Domains &rarr; NS records. Should be <code>*.ns.cloudflare.com</code>. Newly-set NS can take 24h to propagate.</p>
+        <p class="failure-test"><span class="fl-label">Test:</span> <code>dig NS yoursite.com</code> from the terminal. Should match what Cloudflare gave you.</p>
+      </div>
+
+      <div class="failure-card">
+        <span class="failure-tag">// link 02 · CNAME</span>
+        <h3 class="failure-name">Cloudflare → Netlify</h3>
+        <p class="failure-symptom"><span class="fl-label">Symptom:</span> domain resolves, but the page is a Netlify "site not found" or a 404 from Cloudflare.</p>
+        <p class="failure-look"><span class="fl-label">Look:</span> Cloudflare DNS panel &mdash; root or <code>www</code> CNAME pointing at <code>your-site.netlify.app</code>. Also check Netlify &rarr; Domain Management &mdash; the custom domain must be added there too.</p>
+        <p class="failure-test"><span class="fl-label">Test:</span> <code>curl -I https://yoursite.com</code> &mdash; the response headers should mention Netlify.</p>
+      </div>
+
+      <div class="failure-card">
+        <span class="failure-tag">// link 03 · webhook</span>
+        <h3 class="failure-name">GitHub → Netlify build</h3>
+        <p class="failure-symptom"><span class="fl-label">Symptom:</span> push lands, no build kicks off. Site stays on the old version.</p>
+        <p class="failure-look"><span class="fl-label">Look:</span> GitHub &rarr; repo Settings &rarr; Webhooks &rarr; the Netlify hook. Recent deliveries should be 2xx. If they're red, click for the error body.</p>
+        <p class="failure-test"><span class="fl-label">Test:</span> Re-deliver the last push from the GitHub webhook page; watch Netlify's deploys feed light up.</p>
+      </div>
+
+      <div class="failure-card">
+        <span class="failure-tag">// link 04 · build</span>
+        <h3 class="failure-name">Netlify / Railway build</h3>
+        <p class="failure-symptom"><span class="fl-label">Symptom:</span> deploy started, then failed. Old site still serving (good!), but new code never lands.</p>
+        <p class="failure-look"><span class="fl-label">Look:</span> Netlify deploy log or Railway build log &mdash; the failing line is almost always <code>npm ci</code>, a missing env var, or a typo in the build command.</p>
+        <p class="failure-test"><span class="fl-label">Test:</span> Reproduce locally with the same Node version: <code>nvm use 20 &amp;&amp; npm ci &amp;&amp; npm run build</code>.</p>
+      </div>
+
+      <div class="failure-card">
+        <span class="failure-tag">// link 05 · CORS</span>
+        <h3 class="failure-name">Frontend → API</h3>
+        <p class="failure-symptom"><span class="fl-label">Symptom:</span> calls fail in the browser, work in <code>curl</code>. Console shows "blocked by CORS policy".</p>
+        <p class="failure-look"><span class="fl-label">Look:</span> API response headers &mdash; <code>Access-Control-Allow-Origin</code> must include <code>https://yoursite.com</code>. Preflight (<code>OPTIONS</code>) must return 204.</p>
+        <p class="failure-test"><span class="fl-label">Test:</span> <code>curl -I -H "Origin: https://yoursite.com" https://api.yoursite.com/me</code> &mdash; inspect the headers.</p>
+      </div>
+
+      <div class="failure-card">
+        <span class="failure-tag">// link 06 · auth</span>
+        <h3 class="failure-name">API → Firebase</h3>
+        <p class="failure-symptom"><span class="fl-label">Symptom:</span> API returns 401 or 500 with "invalid credentials" / "permission denied". Frontend logs in fine.</p>
+        <p class="failure-look"><span class="fl-label">Look:</span> Railway env &mdash; <code>FIREBASE_SERVICE_ACCOUNT</code> JSON must be valid, the project ID must match the frontend's. Firebase &rarr; Project Settings &rarr; Service Accounts to regenerate.</p>
+        <p class="failure-test"><span class="fl-label">Test:</span> in a Railway shell, log in with the Admin SDK and call <code>auth().listUsers(1)</code>.</p>
+      </div>
+
+      <div class="failure-card">
+        <span class="failure-tag">// link 07 · email</span>
+        <h3 class="failure-name">API → Resend</h3>
+        <p class="failure-symptom"><span class="fl-label">Symptom:</span> signup succeeds, no welcome email arrives. No error, just silence.</p>
+        <p class="failure-look"><span class="fl-label">Look:</span> Resend dashboard &rarr; Emails &mdash; look for the message. Check status: queued, delivered, bounced, marked spam. Verify the sender domain has DKIM/SPF green.</p>
+        <p class="failure-test"><span class="fl-label">Test:</span> <code>curl -X POST https://api.resend.com/emails ...</code> with the API key &mdash; if it fails outside your app, it's not your app.</p>
+      </div>
+
+      <div class="failure-card">
+        <span class="failure-tag">// link 08 · WebSocket</span>
+        <h3 class="failure-name">Frontend → Firebase realtime</h3>
+        <p class="failure-symptom"><span class="fl-label">Symptom:</span> page loads, but live updates never come. No errors; just stale data.</p>
+        <p class="failure-look"><span class="fl-label">Look:</span> browser DevTools &rarr; Network &rarr; WS tab. Look for a long-lived <code>wss://*.firebaseio.com</code> connection. Status should be 101 / open. Firebase &rarr; Realtime DB &rarr; Rules: a deny rule will silently drop reads.</p>
+        <p class="failure-test"><span class="fl-label">Test:</span> swap a value in the Firebase console; the open page should update within 1s.</p>
+      </div>
+
+      <div class="failure-card">
+        <span class="failure-tag">// link 09 · analytics</span>
+        <h3 class="failure-name">Frontend → Umami</h3>
+        <p class="failure-symptom"><span class="fl-label">Symptom:</span> dashboard shows zero visits. Site is clearly being viewed.</p>
+        <p class="failure-look"><span class="fl-label">Look:</span> DevTools &rarr; Network &mdash; filter by <code>send</code>. Should see a 200 to <code>/api/send</code>. Ad-blockers commonly nuke the request &mdash; check from a clean profile.</p>
+        <p class="failure-test"><span class="fl-label">Test:</span> visit the site in a private window with no extensions; check Umami within ~10s.</p>
+      </div>
+
+      <div class="failure-card">
+        <span class="failure-tag">// link 10 · indexing</span>
+        <h3 class="failure-name">Googlebot → Search Console</h3>
+        <p class="failure-symptom"><span class="fl-label">Symptom:</span> "0 valid pages" or new pages never show up in search.</p>
+        <p class="failure-look"><span class="fl-label">Look:</span> Search Console &rarr; Indexing &rarr; Pages. Filter for "not indexed" reasons. Often: <code>noindex</code> meta tag, <code>robots.txt</code> blocking, or simply too new.</p>
+        <p class="failure-test"><span class="fl-label">Test:</span> Search Console &rarr; URL Inspection &rarr; "Test live URL" gives a real-time fetch and the exact reason.</p>
+      </div>
+
+    </div>
+
+    <div class="failure-coda">
+      <span class="failure-coda-label">// rule of thumb</span>
+      <p>If something is broken, walk the wires <em>in order</em>: DNS first, then TLS, then origin, then API, then DB, then external services. Two minutes of <code>dig</code> + <code>curl -I</code> + a glance at the build log resolves nine out of ten incidents before you even open a dashboard.</p>
     </div>
   </section>
 

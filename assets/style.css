@@ -1491,6 +1491,515 @@
     }
   }
 
+  /* === FLOW · expanded SVG === */
+  .flow-svg { min-width: 1100px; }
+
+  /* === FLOW · phase legend (top of page) === */
+  .phase-legend {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .phase-legend-item {
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    padding: 14px 16px 12px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 12px;
+    row-gap: 8px;
+  }
+  .phase-legend-num {
+    grid-row: 1;
+    grid-column: 1;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .phase-legend-item > div {
+    grid-row: 1;
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    justify-content: center;
+  }
+  .phase-legend-name {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .phase-legend-when {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .phase-legend-when em {
+    font-style: italic;
+    color: var(--accent);
+    font-family: 'Fraunces', serif;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 11px;
+  }
+  .phase-legend-desc {
+    grid-column: 1 / -1;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--ink);
+    border-top: 1px dashed rgba(14, 17, 22, 0.2);
+    padding-top: 8px;
+  }
+
+  /* === SHARED HEADERS (trace / scenarios / handoff / failure) === */
+  .trace-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .trace-title {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .trace-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .trace-stamp {
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    padding: 4px 10px;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .trace-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    max-width: 78ch;
+    line-height: 1.55;
+  }
+  .trace-sub code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    background: rgba(14, 17, 22, 0.06);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  /* === TRACE · numbered beats === */
+  .trace-section,
+  .scenarios-section,
+  .handoff-section,
+  .failure-section {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1.5px solid var(--ink);
+  }
+
+  .trace-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .beat {
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    padding: 14px 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    min-height: 165px;
+  }
+  .beat[data-phase="build"] { border-left: 6px solid #d4b04a; }
+  .beat[data-phase="serve"] { border-left: 6px solid #7a93b8; }
+
+  .beat-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--paper);
+    background: var(--ink);
+    padding: 2px 7px;
+    align-self: flex-start;
+    font-weight: 600;
+  }
+  .beat-when {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .beat-title {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-top: 2px;
+  }
+  .beat-desc {
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .beat-desc code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    background: rgba(14, 17, 22, 0.06);
+    padding: 1px 4px;
+    border-radius: 2px;
+  }
+  .beat-tech {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(14, 17, 22, 0.22);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  /* === SCENARIOS · 4 cards === */
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .scenario-card {
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    padding: 16px 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .scenario-card-danger {
+    border-color: var(--accent);
+    background: rgba(200, 68, 58, 0.04);
+  }
+  .scenario-head {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .scenario-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .scenario-name {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .scenario-blurb {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .scenario-flow {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    counter-reset: sf;
+    border-top: 1px dashed rgba(14, 17, 22, 0.22);
+    padding-top: 10px;
+  }
+  .scenario-flow li {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) auto minmax(0, 1.1fr) minmax(0, 1.4fr);
+    gap: 8px;
+    align-items: baseline;
+    font-size: 10.5px;
+    line-height: 1.45;
+    padding: 4px 0;
+    border-bottom: 1px dotted rgba(14, 17, 22, 0.12);
+  }
+  .scenario-flow li:last-child { border-bottom: none; }
+  .sf-actor {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .sf-arrow {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+    font-size: 12px;
+    text-align: center;
+  }
+  .sf-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    grid-column: 4;
+    text-align: right;
+  }
+  .sf-detail-danger {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    grid-column: 4;
+    text-align: right;
+  }
+  .sf-detail code,
+  .sf-detail-danger code {
+    background: rgba(14, 17, 22, 0.06);
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-size: 9.5px;
+  }
+  .scenario-note {
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(14, 17, 22, 0.22);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  /* === HANDOFF TABLE === */
+  .handoff-table {
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    overflow-x: auto;
+  }
+  .handoff-header,
+  .handoff-row {
+    display: grid;
+    grid-template-columns: 1.1fr 1.2fr 1.4fr 1.6fr 1fr;
+    gap: 0;
+    align-items: stretch;
+    min-width: 820px;
+  }
+  .handoff-header {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .handoff-header > span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 10px 12px;
+    border-right: 1px solid rgba(236, 223, 200, 0.18);
+  }
+  .handoff-header > span:last-child { border-right: none; }
+  .handoff-row {
+    border-top: 1px solid rgba(14, 17, 22, 0.18);
+    transition: background 0.12s ease;
+  }
+  .handoff-row:hover {
+    background: rgba(14, 17, 22, 0.04);
+  }
+  .handoff-row > span {
+    padding: 10px 12px;
+    font-size: 10.5px;
+    line-height: 1.45;
+    border-right: 1px dotted rgba(14, 17, 22, 0.18);
+    display: block;
+  }
+  .handoff-row > span:last-child { border-right: none; }
+  .handoff-row[data-phase="setup"] { background: rgba(232, 180, 184, 0.18); }
+  .handoff-row[data-phase="build"] { background: rgba(244, 228, 168, 0.22); }
+  .handoff-row[data-phase="serve"] { background: rgba(184, 197, 214, 0.18); }
+  .handoff-row[data-phase="setup"]:hover { background: rgba(232, 180, 184, 0.32); }
+  .handoff-row[data-phase="build"]:hover { background: rgba(244, 228, 168, 0.36); }
+  .handoff-row[data-phase="serve"]:hover { background: rgba(184, 197, 214, 0.32); }
+  .ho-from,
+  .ho-to {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .ho-mech,
+  .ho-pay {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink);
+  }
+  .ho-when {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .handoff-row code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(14, 17, 22, 0.08);
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-size: 9.5px;
+  }
+
+  /* === FAILURE MODES === */
+  .failure-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .failure-card {
+    border: 1.5px dashed var(--ink);
+    background: rgba(14, 17, 22, 0.02);
+    padding: 14px 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .failure-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .failure-name {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin-top: -2px;
+  }
+  .failure-symptom,
+  .failure-look,
+  .failure-test {
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: 0;
+  }
+  .failure-look {
+    border-top: 1px dotted rgba(14, 17, 22, 0.22);
+    padding-top: 8px;
+  }
+  .failure-test {
+    border-top: 1px dotted rgba(14, 17, 22, 0.22);
+    padding-top: 8px;
+  }
+  .fl-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .failure-symptom code,
+  .failure-look code,
+  .failure-test code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(14, 17, 22, 0.07);
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-size: 10px;
+  }
+  .failure-coda {
+    margin-top: 18px;
+    padding: 14px 18px;
+    border: 2px solid var(--accent);
+    background: rgba(200, 68, 58, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .failure-coda-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .failure-coda p {
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .failure-coda em {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .failure-coda code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(200, 68, 58, 0.1);
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-size: 10.5px;
+  }
+
+  /* === FLOW · responsive collapse === */
+  @media (max-width: 1100px) {
+    .trace-grid { grid-template-columns: repeat(2, 1fr); }
+    .phase-legend { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 880px) {
+    .scenario-grid { grid-template-columns: 1fr; }
+    .failure-grid { grid-template-columns: 1fr; }
+    .trace-grid { grid-template-columns: 1fr; }
+    .scenario-flow li {
+      grid-template-columns: auto auto 1fr;
+      grid-template-rows: auto auto;
+      gap: 4px 8px;
+    }
+    .sf-detail,
+    .sf-detail-danger {
+      grid-column: 1 / -1;
+      text-align: left;
+      padding-left: 4px;
+    }
+  }
+
   /* === PRINT === */
   @media print {
     :root {
@@ -1523,11 +2032,17 @@
     .frame::before, .frame::after { display: none; }
     .node,
     .step,
+    .beat,
+    .scenario-card,
+    .failure-card,
+    .phase-legend-item,
+    .handoff-row,
     .overlap-card,
     .gap-card,
     .ladder,
     .rosetta-grid,
-    .audit-total {
+    .audit-total,
+    .failure-coda {
       break-inside: avoid;
       page-break-inside: avoid;
     }
